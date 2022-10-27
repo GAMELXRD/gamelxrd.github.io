@@ -1,5 +1,5 @@
 /*BEGIN Xbox 360 Controller Styling*/
-.controller.xbox-old {
+.controller.xbox-old .custom {
     background: url(bg1.png);
     height: 544px;
     width: 668px;
