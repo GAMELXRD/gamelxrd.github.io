@@ -17,8 +17,9 @@ body {
 .container {
     padding: 1rem;
     display: grid;
-    grid-template-rows: auto;
     justify-items: center;
+    /* background-color: #6f1212; */
+    width: 100%;
 }
 
 .container h1 {
@@ -125,26 +126,50 @@ body {
     }
 }
 
-@media only screen and (max-width: 712px) {
+@media only screen and (max-width: 462px) {
     .container h1 {
-        font-size: 2.6rem;
+        font-size: 2.5rem;
     }
     
     .container h2 {
-        font-size: 2.1rem;
+        font-size: 2rem;
     }
     
     .container h3 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
     
     .container p {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
     }
 
     .links {
-        transform: scale(1.6);
-        padding-top: 6.5rem;
+        transform: scale(1.5);
+        padding-top: 5rem;
+        padding-bottom: 1rem;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    .container h1 {
+        font-size: 3rem;
+    }
+    
+    .container h2 {
+        font-size: 2.5rem;
+    }
+    
+    .container h3 {
+        font-size: 2rem;
+    }
+    
+    .container p {
+        font-size: 2.1rem;
+    }
+
+    .links {
+        transform: scale(1.8);
+        padding-top: 8rem;
         padding-bottom: 1rem;
     }
 }
