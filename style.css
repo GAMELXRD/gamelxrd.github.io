@@ -163,4 +163,8 @@ body {
         padding-top: 2rem;
     }
 
+    .container {
+        padding: 0rem;
+    }
+
 }
