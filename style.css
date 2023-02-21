@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: #FAF7F0;
+    background-image: url(img/bg.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.container {
+    padding: 1rem;
+    display: grid;
+    grid-template-rows: auto;
+    justify-items: center;
+}
+
+.container p {
+    font-size: 1.1rem;
+    text-align: left;
+    padding: 0.2rem;
+}
+
+.title {
+    display: block;
+    width: 900px;
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.text {
+    display: block;
+    width: 50%;
+}
+
+.links {
+    display: grid;
+    grid-template-areas: "a a";
+    gap: 3rem;
+    padding-top: 2rem;
+}
+
+.links a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.se {
+    background-image: url(img/se.png);
+    width: 350px;
+    height: 150px;
+}
+
+.da {
+    background-image: url(img/da.png);
+    width: 350px;
+    height: 150px;
+}
+
+.fade {
+    opacity: 1;
+}
+
+.fade:hover {
+    opacity: 0.9;
+    transition: 0.2s;
+}
+
+
