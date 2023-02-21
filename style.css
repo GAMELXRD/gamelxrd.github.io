@@ -20,7 +20,7 @@ body {
     justify-items: center;
     /* background-color: #6f1212; */
     /* width: 100%; */
-    height: 100vh;
+    /* height: 100%; */
 }
 
 .container h1 {
@@ -33,6 +33,9 @@ body {
 
 .container h3 {
     font-size: 1rem;
+    text-align: center; 
+    font-weight: 600; 
+    padding-top: 3rem;
 }
 
 .container p {
@@ -42,14 +45,14 @@ body {
 }
 
 .title {
-    display: block;
-    width: 900px;
+    /* display: block; */
+    /* width: 900px; */
     text-align: center;
     padding-top: 1rem;
 }
 
 .text {
-    display: block;
+    /* display: block; */
     width: 50%;
 }
 
@@ -126,48 +129,38 @@ body {
 
 @media screen and (max-width: 462px) {
     .container h1 {
-        font-size: 2.5rem;
-    }
-    
-    .container h2 {
         font-size: 2rem;
     }
     
-    .container h3 {
+    .container h2 {
         font-size: 1.5rem;
     }
     
+    .container h3 {
+        font-size: 1rem;
+    }
+    
     .container p {
-        font-size: 1.6rem;
+        font-size: 1.1rem;
     }
 
     .links {
-        transform: scale(1.5);
-        padding-top: 5rem;
+        transform: scale(1.1);
+        padding-top: 3rem;
         padding-bottom: 1rem;
     }
 }
 
 @media screen and (max-width: 350px) {
-    .container h1 {
-        font-size: 3rem;
-    }
-    
-    .container h2 {
-        font-size: 2.5rem;
-    }
-    
-    .container h3 {
-        font-size: 2rem;
-    }
-    
-    .container p {
-        font-size: 2.1rem;
-    }
 
     .links {
-        transform: scale(1.8);
-        padding-top: 8rem;
+        transform: scale(0.9);
+        padding-top: 1rem;
         padding-bottom: 1rem;
     }
+
+    .container h3 {
+        padding-top: 1rem;
+    }
+
 }
