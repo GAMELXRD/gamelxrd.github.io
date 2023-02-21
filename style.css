@@ -82,6 +82,12 @@ body {
     height: 150px;
 }
 
+.footer {
+    text-align: center; 
+    padding-bottom: 2rem; 
+    padding-top: 2rem;
+}
+
 .fade {
     opacity: 1;
 }
@@ -125,6 +131,10 @@ body {
         font-size: 1.3rem;
     }
 
+    .footer {
+        padding-top: 4rem;
+    }
+
 }
 
 @media screen and (max-width: 486px) {
@@ -149,6 +159,10 @@ body {
         padding-top: 3rem;
         padding-bottom: 1rem;
     }
+
+    .footer {
+        padding-top: 2rem;
+    }
 }
 
 @media screen and (max-width: 390px) {
@@ -159,12 +173,20 @@ body {
         padding-bottom: 1rem;
     }
 
+    .container h1 {
+        padding-top: 1.4rem;
+    }
+
     .container h3 {
         padding-top: 2rem;
     }
 
     .container {
-        padding: 0rem;
+        padding: 0.2rem;
+    }
+
+    .footer {
+        padding-top: 0.5rem;
     }
 
 }
