@@ -90,7 +90,7 @@ body {
 
 /* Responsive */
 
-@media only screen and (max-width: 912px) {
+/* @media only screen and (max-width: 912px) {
     .text {
         display: block;
         width: 80%;
@@ -172,4 +172,4 @@ body {
         padding-top: 8rem;
         padding-bottom: 1rem;
     }
-}
+} */
