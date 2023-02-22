@@ -12,6 +12,15 @@
 </head>
 <body>
 
+    <img src="img/blocks/1.png" class="object" data-value="-2" alt="">
+    <img src="img/blocks/2.png" class="object" data-value="4" alt="">
+    <img src="img/blocks/3.png" class="object" data-value="-6" alt="">
+    <img src="img/blocks/4.png" class="object" data-value="4" alt="">
+    <img src="img/blocks/5.png" class="object" data-value="8" alt="">
+    <img src="img/blocks/6.png" class="object" data-value="-4" alt="">
+    <img src="img/blocks/7.png" class="object" data-value="4" alt="">
+    <img src="img/blocks/8.png" class="object" data-value="-9" alt="">
+
     <!-- ❌ - недоступно, ✔️ - доступно -->
 
     <div class="container">
@@ -55,9 +64,21 @@
         </div>
         <span class="footer">Список интерактива пополняется. <br> Заглядывай сюда почаще 😉</span> 
         
-        
-        
     </div>
+
+    <script type="text/javascript">
+        document.addEventListener("mousemove", parallax);
+        function parallax(e){
+            document.querySelectorAll(".object").forEach(function(move){
+
+                var moving_value = move.getAttribute("data-value");
+                var x = (e.clientX * moving_value) / 250;
+                var y = (e.clientY * moving_value) / 250;
+
+                move.style.transform = "translateX(" + x + "px) translateY(" + y + "px)"; 
+            });
+        }
+    </script>
     
 </body>
 </html>

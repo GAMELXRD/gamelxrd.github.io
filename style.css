@@ -9,9 +9,20 @@
 body {
     font-family: 'Inter Tight', sans-serif;
     background-color: #FAF7F0;
-    background-image: url(img/bg.png);
+    /* background-image: url(img/bg.png);
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center; */
+}
+
+img {
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    top: 0;
+    left: 0;
+    object-fit: contain;
+    opacity: 1;
+    pointer-events: none;
 }
 
 .container {
@@ -103,6 +114,10 @@ body {
 @media screen and (max-width: 912px) {
     .text {
         width: 80%;
+    }
+
+    img {
+        opacity: 0;
     }
 }
 
