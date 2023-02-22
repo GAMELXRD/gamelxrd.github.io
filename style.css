@@ -27,12 +27,8 @@ img {
 
 .container {
     margin-top: 1rem;
-    padding: 1rem;
     display: grid;
     justify-items: center;
-    /* background-color: #6f1212; */
-    /* width: 100%; */
-    /* height: 100%; */
 }
 
 .container h1 {
@@ -94,9 +90,9 @@ img {
     height: 150px;
 }
 
-.footer {
-    text-align: center; 
-    padding-bottom: 2rem; 
+.down {
+    text-align: center;
+    padding-bottom: 2rem;
     padding-top: 2rem;
 }
 
@@ -119,6 +115,49 @@ img {
     animation-iteration-count: infinite;
 }
 
+footer {
+    display: grid;
+    grid-template-areas: "a a";
+    color: #fff;
+    justify-content: center;
+    background-color: #1e1e1e;
+    text-align: center;
+    height: 8rem;
+    width: 100%;
+}
+
+footer a {
+    text-decoration: none;
+    color: #fff;
+    vertical-align: middle;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+footer a:hover {
+    color: #c7c7c7;
+}
+
+footer .social {
+    width: 200px;
+    text-align: left;
+    margin: 1rem;
+    padding: 1rem;
+    line-height: 2.2rem;
+}
+
+footer .info {
+    width:  200px;
+    text-align: left;
+    margin: 1rem;
+    padding: 2rem;
+}
+
+footer h3 {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
 
 /* Animations */
 
@@ -139,9 +178,35 @@ img {
     img {
         opacity: 0;
     }
+
+    footer {
+        padding-top: 0.5rem;
+        gap: 0rem;
+        height: 7rem;
+    }
+
+    footer .social {
+        width: 90px;
+        text-align: left;
+        margin: 0rem;
+        padding: 1rem;
+        line-height: 2.2rem;
+    }
+    
+    footer .info {
+        width:  200px;
+        text-align: left;
+        margin: 0rem;
+        padding: 2rem;
+    }
+    
+    footer h3 {
+        font-weight: 600;
+        font-size: 1rem;
+    }
 }
 
-@media screen and (max-width: 712px) {
+@media screen and (max-width: 792px) {
     .links {
         grid-template-areas: "a";
         gap: 1rem;
@@ -166,7 +231,7 @@ img {
         font-size: 1.3rem;
     }
 
-    .footer {
+    .down {
         padding-top: 4rem;
     }
 
@@ -195,8 +260,24 @@ img {
         padding-bottom: 1rem;
     }
 
-    .footer {
+    .down {
         padding-top: 2rem;
+    }
+
+    footer a {
+        font-size: 0.9rem;
+    }
+
+    footer .social {
+        line-height: 1.9rem;
+    }
+
+    footer .info {
+        padding: 1.6rem;
+    }
+    
+    footer h3 {
+        font-size: 0.9rem;
     }
 }
 
@@ -216,12 +297,21 @@ img {
         padding-top: 2rem;
     }
 
-    .container {
-        padding: 0.2rem;
+    .down {
+        padding-top: 0.5rem;
     }
 
-    .footer {
-        padding-top: 0.5rem;
+    footer {
+        height: 6rem;
+    }
+
+    footer .social {
+        padding: 0.6rem;
+    }
+
+    footer .info {
+        padding: 1.2rem;
+        width: 180px;
     }
 
 }
