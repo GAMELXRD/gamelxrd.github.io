@@ -10,6 +10,9 @@
     <link rel="sshortcut icon" href="img/icon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="main.js"></script>
+
 </head>
 <body>
 
@@ -37,11 +40,12 @@
             <p><span style="font-weight: 600;">!вода</span> - немного восстановить жажду</p>
             <p><span style="font-weight: 600;">!ап</span> - подкинуть на пару блоков</p>
             <p><span style="font-weight: 600;">!псс</span> - шугануть стримера</p>
-            <p><span style="font-weight: 600;">!пуф</span> - накастовать магии <span class="new">NEW</span></p>
-            <p><span style="font-weight: 600;">!фу</span> - выбить предмет из основной руки <span class="new">NEW</span></p>
+            <p><span style="font-weight: 600;">!пуф</span> - накастовать магии</p>
+            <p><span style="font-weight: 600;">!фу</span> - выбить предмет из основной руки</p>
+            <p><span style="font-weight: 600;">!голем</span> - стать временным телохранителем (на минуту) <span class="new">NEW</span></p>
         </div>
 
-        
+        <!-- <span class="new">NEW</span> -->
 
         <div class="title">
             <h2>Донат ивенты</h2>
@@ -49,8 +53,9 @@
         <div class="text">
             <br>
             <p><span style="font-weight: 600;">10 руб</span> - стать зомби, скелетом, кадавром или стреем</p>
-            <p><span style="font-weight: 600;">15 руб</span> - рандомный эффект <span class="new">NEW</span></p>
+            <p><span style="font-weight: 600;">15 руб</span> - рандомный эффект (на 5 минут)</p>
             <p><span style="font-weight: 600;">20 руб</span> - вызвать ведьму</p>
+            <p><span style="font-weight: 600;">30 руб</span> - охранять стримера до самой смерти <span class="new">NEW</span></p>
             <!-- <p><span style="font-weight: 600;">50 руб</span> - рандомное событие</p> -->
             <!-- <p><s><span style="font-weight: 600;">66 руб</span> - ударить стримера молнией</p></s> -->
             <p><span style="font-weight: 600;">100 руб</span> - стать верным псом</p>
@@ -84,19 +89,6 @@
 
     
 
-    <script type="text/javascript">
-        document.addEventListener("mousemove", parallax);
-        function parallax(e){
-            document.querySelectorAll(".object").forEach(function(move){
-
-                var moving_value = move.getAttribute("data-value");
-                var x = (e.clientX * moving_value) / 250;
-                var y = (e.clientY * moving_value) / 250;
-
-                move.style.transform = "translateX(" + x + "px) translateY(" + y + "px)"; 
-            });
-        }
-    </script>
 
     
 </body>
