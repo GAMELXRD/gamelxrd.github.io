@@ -48,7 +48,7 @@ img {
 
 .container p {
     font-size: 1.1rem;
-    text-align: left;
+    text-align: center;
     padding: 0.2rem;
 }
 
@@ -65,7 +65,7 @@ img {
 }
 
 .links {
-    margin-top: 3rem;
+    margin-top: 1rem;
     display: grid;
     grid-template-areas: "a";
     gap: 1rem;
@@ -91,6 +91,85 @@ img {
     width: 350px;
     height: 150px;
 }
+
+/* Иконки шмота для ИРЛ */
+
+.things {
+    display: grid;
+    grid-template-areas: "a a a a";
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
+.holder {
+    background-image: url(img/things/holder.jpg);
+    background-size: 110%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.holder a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.powerbank {
+    background-image: url(img/things/powerbank.jpg);
+    background-size: 110%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.powerbank a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.case {
+    background-image: url(img/things/case.jpg);
+    background-size: 110%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.case a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.bag {
+    background-image: url(img/things/bag.png);
+    background-size: 100%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.bag a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+/* Конец иконок */
 
 .down {
     text-align: center;
@@ -236,6 +315,12 @@ footer h3 {
 
     .down {
         padding-top: 4rem;
+        font-size: 1.2rem;
+    }
+
+    .things {
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
     }
 
 }
@@ -259,7 +344,7 @@ footer h3 {
 
     .links {
         transform: scale(1.1);
-        padding-top: 3rem;
+        padding-top: 0.5rem;
         padding-bottom: 1rem;
         margin-top: 1rem;
     }
@@ -283,15 +368,22 @@ footer h3 {
     footer h3 {
         font-size: 0.9rem;
     }
+
+    .things {
+        display: grid;
+        grid-template-areas: "a a";
+        gap: 1rem;
+        padding-top: 1rem;
+    }
 }
 
 @media screen and (max-width: 390px) {
 
     .links {
         transform: scale(0.9);
-        padding-top: 1rem;
+        padding-top: 0.1rem;
         padding-bottom: 1rem;
-        margin-top: 0.5rem;
+        margin-top: 0.1rem;
     }
 
     .container h1 {
@@ -317,6 +409,11 @@ footer h3 {
     footer .info {
         padding: 1.2rem;
         width: 180px;
+    }
+
+    .things {
+        scale: 0.9;
+        padding-top: 0.2rem;
     }
 
 }
