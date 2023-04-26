@@ -25,6 +25,25 @@ img {
     pointer-events: none;
 }
 
+table {
+    /* border: 2px solid #1e1e1e; */
+    text-align: left;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.7rem;
+    font-size: 1.1rem;
+}
+
+th {
+    /* border: 2px solid #1e1e1e; */
+    padding: 0.5rem;
+}
+
+td {
+    /* border-top: 1px solid #1e1e1e; */
+    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+}
+
 .container {
     margin-top: 1rem;
     display: grid;
@@ -61,7 +80,11 @@ img {
 
 .text {
     /* display: block; */
-    width: 50%;
+    width: 40%;
+}
+
+.text p {
+    text-align: left;
 }
 
 .links {
