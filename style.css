@@ -8,10 +8,12 @@
 
 body {
     font-family: 'Inter Tight', sans-serif;
-    background-color: #FAF7F0;
+    /* background-color: #FAF7F0; */
+    background-color: #2b2b2b;
     /* background-image: url(img/bg.png);
     background-repeat: no-repeat;
     background-position: center; */
+    color: #d9d9d9;
 }
 
 img {
@@ -25,6 +27,12 @@ img {
     pointer-events: none;
 }
 
+.darkppg {
+    position: relative;
+    width: 50%;
+    height: 50%;
+}
+
 table {
     /* border: 2px solid #1e1e1e; */
     text-align: left;
@@ -35,13 +43,33 @@ table {
 }
 
 th {
-    /* border: 2px solid #1e1e1e; */
-    padding: 0.5rem;
+    /* border-bottom: 3px solid #1e1e1e; */
+    padding: 0.6rem;
+    background-color: #1e1e1e;
+    color: #fff;
+    font-weight: 400;
+}
+
+th:first-child {
+    border-radius: 0.7rem 0 0 0.7rem;
+}
+
+th:last-child {
+    border-radius: 0 0.7rem 0.7rem 0;
+}
+
+tr:nth-child(even) {
+    background: #e4dccb;
 }
 
 td {
-    /* border-top: 1px solid #1e1e1e; */
-    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+    padding: 0.45rem 0.5rem 0.45rem 0.5rem;
+}
+
+.text_link {
+    text-decoration: none;
+    color: #e4932f;
+    font-weight: 600;
 }
 
 .container {
@@ -62,7 +90,7 @@ td {
     font-size: 1rem;
     text-align: center; 
     font-weight: 600; 
-    padding-top: 3rem;
+    /* padding-top: 3rem; */
 }
 
 .container p {
@@ -76,6 +104,7 @@ td {
     /* width: 900px; */
     text-align: center;
     padding-top: 1rem;
+    margin-top: -5rem;
 }
 
 .text {
@@ -113,6 +142,51 @@ td {
     background-image: url(img/da.png);
     width: 350px;
     height: 150px;
+}
+
+/* Иконки для Dark PPG */
+
+.dark_ppg {
+    display: grid;
+    grid-template-areas: "a a";
+    gap: 1rem;
+    padding-top: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.map {
+    background-image: url(img/links/map.png);
+    background-size: 110%;
+    background-position: center;
+    width: 200px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.map a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.multi {
+    background-image: url(img/links/multi.png);
+    background-size: 110%;
+    background-position: center;
+    width: 200px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.multi a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
 }
 
 /* Иконки шмота для ИРЛ */
