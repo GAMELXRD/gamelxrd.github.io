@@ -8,12 +8,12 @@
 
 body {
     font-family: 'Inter Tight', sans-serif;
-    /* background-color: #FAF7F0; */
-    background-color: #2b2b2b;
+    background-color: #FAF7F0;
+    /* background-color: #2b2b2b; */
     /* background-image: url(img/bg.png);
     background-repeat: no-repeat;
     background-position: center; */
-    color: #d9d9d9;
+    color: #2b2b2b;
 }
 
 img {
@@ -25,12 +25,6 @@ img {
     object-fit: contain;
     opacity: 1;
     pointer-events: none;
-}
-
-.darkppg {
-    position: relative;
-    width: 50%;
-    height: 50%;
 }
 
 table {
@@ -104,7 +98,7 @@ td {
     /* width: 900px; */
     text-align: center;
     padding-top: 1rem;
-    margin-top: -5rem;
+    margin-top: 2rem;
 }
 
 .text {
@@ -196,6 +190,42 @@ td {
     grid-template-areas: "a a a a";
     gap: 1rem;
     padding-top: 1rem;
+    position: relative;
+}
+
+.select {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    top: 0;
+    font-weight: 800;
+    text-align: center;
+    width: 150px;
+    height: 150px;
+    background-color: #070707c0;
+    border-radius: 1rem;
+    color: #fff;
+    opacity: 0;
+    backdrop-filter: blur(3px);
+} 
+
+.select:hover {
+    opacity: 1;
+    transition: 0.3s ease-in-out; 
+}
+
+.select h2 {
+    font-size: 1.1rem;
+    position: relative;
+    max-height: 150px;
+    max-width: 150px;
+}
+
+.done {
+    background-color: #64dc46c0;
+    color: #1e1e1e;
 }
 
 .holder {
@@ -206,6 +236,7 @@ td {
     height: 150px;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
 }
 
 .holder a {
@@ -223,6 +254,7 @@ td {
     height: 150px;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
 }
 
 .powerbank a {
@@ -232,17 +264,18 @@ td {
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
 }
 
-.case {
-    background-image: url(img/things/case.jpg);
+.tws {
+    background-image: url(img/things/tws.webp);
     background-size: 110%;
     background-position: center;
     width: 150px;
     height: 150px;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
 }
 
-.case a {
+.tws a {
     text-align: center;
     text-decoration: none;
     border-radius: 1rem;
@@ -257,6 +290,7 @@ td {
     height: 150px;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
 }
 
 .bag a {
@@ -264,7 +298,7 @@ td {
     text-decoration: none;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}
+}  
 
 /* Конец иконок */
 
