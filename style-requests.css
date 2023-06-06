@@ -131,8 +131,8 @@ body {
 @media screen and (max-width: 486px) {
 
     .ref {
-        font-size: 0.9rem;
-        border-radius: 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 0.5rem;
     }
 
     .slider {
