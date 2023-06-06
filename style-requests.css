@@ -38,18 +38,18 @@ body {
 .wrapper {
     display: flex;
     /* gap: 1rem; */
-    max-width: 1200px;
+    max-width: 1300px;
     width: 100%;
     overflow-x: auto;
     scroll-snap-type: x;
     cursor: grab;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    mask-image: url(img/requests/mask.png);
+    /* mask-image: url(img/requests/mask.png);
     -webkit-mask-image: url(img/requests/mask.png);
     mask-position: center center;
     mask-repeat: no-repeat;
-    mask-size: cover;
+    mask-size: cover; */
 }
 
 .wrapper::-webkit-scrollbar {
