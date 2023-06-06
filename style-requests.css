@@ -12,5 +12,136 @@
     box-sizing: border-box;
 }
 
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    font-family: 'Inter Tight', sans-serif;
+    background-color: #FAF7F0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    
+
+}
+
+.wrapper {
+    display: flex;
+    /* gap: 1rem; */
+    max-width: 1200px;
+    width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x;
+    cursor: grab;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    mask-image: url(img/requests/mask.png);
+    -webkit-mask-image: url(img/requests/mask.png);
+    mask-position: center center;
+    mask-repeat: no-repeat;
+    mask-size: cover;
+}
+
+.wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.slider {
+    /* min-width: calc(50% - 0.5rem); */
+    width: 500px;
+    height: 700px;
+    aspect-ratio: 1 / 1;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: #fff;
+    scroll-snap-align: center;
+    font-weight: 600;
+    user-select: none;
+    border-radius: 1rem;
+    box-shadow: 0 0 7px #000000;
+    scale: 0.97;
+}
+
+.first {
+    background-color: transparent;
+    box-shadow: 0 0 0px #000000;
+    width: 250px;
+    margin-right: -4rem;
+}
+
+.slider img {
+    width: 100%;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+.option {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.ref {
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #FAF7F0;
+    padding: 1rem;
+    background-color: #222;
+    border-radius: 0.8rem;
+}
+
+.gold {
+    background-color: #fa9f0b;
+    color: #222;
+}
 
 
+/* Animation */
+
+@keyframes new {
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+/* Responsive */
+
+@media screen and (max-width: 792px) {
+    .first {
+        width: 150px;
+        margin-right: -2rem;
+    }
+}
+
+@media screen and (max-width: 486px) {
+
+    .ref {
+        font-size: 0.9rem;
+        border-radius: 0.6rem;
+    }
+
+    .slider {
+        width: 350px;
+        height: 490px;
+    }
+
+    .first {
+        width: 50px;
+        margin-right: 0rem;
+    }
+}
