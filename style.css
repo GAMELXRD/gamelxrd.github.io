@@ -9,11 +9,9 @@
 body {
     font-family: 'Inter Tight', sans-serif;
     background-color: #FAF7F0;
-    /* background-color: #2b2b2b; */
     /* background-image: url(img/bg.png);
     background-repeat: no-repeat;
     background-position: center; */
-    color: #2b2b2b;
 }
 
 img {
@@ -37,33 +35,13 @@ table {
 }
 
 th {
-    /* border-bottom: 3px solid #1e1e1e; */
-    padding: 0.6rem;
-    background-color: #1e1e1e;
-    color: #fff;
-    font-weight: 400;
-}
-
-th:first-child {
-    border-radius: 0.7rem 0 0 0.7rem;
-}
-
-th:last-child {
-    border-radius: 0 0.7rem 0.7rem 0;
-}
-
-tr:nth-child(even) {
-    background: #e4dccb;
+    /* border: 2px solid #1e1e1e; */
+    padding: 0.5rem;
 }
 
 td {
-    padding: 0.45rem 0.5rem 0.45rem 0.5rem;
-}
-
-.text_link {
-    text-decoration: none;
-    color: #e4932f;
-    font-weight: 600;
+    /* border-top: 1px solid #1e1e1e; */
+    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
 }
 
 .container {
@@ -77,14 +55,14 @@ td {
 }
 
 .container h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 .container h3 {
     font-size: 1rem;
     text-align: center; 
     font-weight: 600; 
-    /* padding-top: 3rem; */
+    padding-top: 3rem;
 }
 
 .container p {
@@ -98,7 +76,7 @@ td {
     /* width: 900px; */
     text-align: center;
     padding-top: 1rem;
-    margin-top: 2rem;
+    padding-left: 1rem;
 }
 
 .text {
@@ -138,51 +116,6 @@ td {
     height: 150px;
 }
 
-/* Иконки для Dark PPG */
-
-.dark_ppg {
-    display: grid;
-    grid-template-areas: "a a";
-    gap: 1rem;
-    padding-top: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
-.map {
-    background-image: url(img/links/map.png);
-    background-size: 110%;
-    background-position: center;
-    width: 200px;
-    height: 150px;
-    border-radius: 1rem;
-    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}
-
-.map a {
-    text-align: center;
-    text-decoration: none;
-    border-radius: 1rem;
-    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}
-
-.multi {
-    background-image: url(img/links/multi.png);
-    background-size: 110%;
-    background-position: center;
-    width: 200px;
-    height: 150px;
-    border-radius: 1rem;
-    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}
-
-.multi a {
-    text-align: center;
-    text-decoration: none;
-    border-radius: 1rem;
-    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}
-
 /* Иконки шмота для ИРЛ */
 
 .things {
@@ -198,34 +131,27 @@ td {
     display: flex;
     justify-content: center;
     align-items: center;
-    left: 0;
-    top: 0;
+    left: 0px;
+    top: 0px;
     font-weight: 800;
     text-align: center;
     width: 150px;
     height: 150px;
-    background-color: #070707c0;
-    border-radius: 1rem;
-    color: #fff;
+    background-color: rgba(7, 7, 7, 0.753);
+    color: rgb(255, 255, 255);
     opacity: 0;
     backdrop-filter: blur(3px);
-} 
+    border-radius: 1rem;
+}
 
 .select:hover {
     opacity: 1;
-    transition: 0.3s ease-in-out; 
-}
-
-.select h2 {
-    font-size: 1.1rem;
-    position: relative;
-    max-height: 150px;
-    max-width: 150px;
+    transition: 0.3s ease-in-out;
 }
 
 .done {
-    background-color: #64dc46c0;
-    color: #1e1e1e;
+    background-color: rgba(100, 220, 70, 0.753);
+    color: rgb(30, 30, 30);
 }
 
 .holder {
@@ -298,14 +224,16 @@ td {
     text-decoration: none;
     border-radius: 1rem;
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
-}  
+}
 
 /* Конец иконок */
 
 .down {
     text-align: center;
     padding-bottom: 2rem;
-    padding-top: 5rem;
+    padding-top: 3rem;
+    font-weight: 500;
+    font-size: 1.2rem;
 }
 
 .fade {
