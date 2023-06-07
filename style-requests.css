@@ -89,10 +89,12 @@ body {
 }
 
 .option {
-    display: flex;
+    display: grid;
     gap: 1rem;
+    grid-template-areas: "a a a a";
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .ref {
@@ -121,7 +123,32 @@ body {
 
 /* Responsive */
 
+@media screen and (max-height: 812px) {
+    .slider {
+        width: 400px;
+        height: 560px;
+    }
+}
+
 @media screen and (max-width: 792px) {
+    .first {
+        width: 150px;
+        margin-right: -2rem;
+    }
+    
+}
+
+@media screen and (max-width: 712px) {
+    .option {
+        grid-template-areas: "a a";
+        gap: 0.5rem;
+    }
+
+    .slider {
+        width: 400px;
+        height: 560px;
+    }
+
     .first {
         width: 150px;
         margin-right: -2rem;
@@ -129,6 +156,9 @@ body {
 }
 
 @media screen and (max-width: 486px) {
+    .container {
+        margin-top: -5rem;
+    }
 
     .ref {
         font-size: 0.8rem;
