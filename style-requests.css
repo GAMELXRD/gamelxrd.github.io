@@ -130,6 +130,13 @@ body {
     }
 }
 
+@media screen and (max-height: 680px) {
+    .slider {
+        width: 360px;
+        height: 500px;
+    }
+}
+
 @media screen and (max-width: 792px) {
     .first {
         width: 150px;
@@ -175,4 +182,5 @@ body {
         margin-right: 0rem;
         font-size: 1rem;
     }
+    
 }
