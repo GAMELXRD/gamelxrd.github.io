@@ -226,6 +226,42 @@ td {
     box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
 }
 
+.ram {
+    background-image: url(img/things/ram.jpg);
+    background-size: 100%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
+}
+
+.ram a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.rtx {
+    background-image: url(img/things/rtx.png);
+    background-size: 130%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
+}
+
+.rtx a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
 /* Конец иконок */
 
 .down {
