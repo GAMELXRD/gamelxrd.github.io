@@ -144,6 +144,11 @@ td {
     border-radius: 1rem;
 }
 
+.select h2 {
+    font-size: 1.2rem;
+    padding: 0.3rem;
+}
+
 .select:hover {
     opacity: 1;
     transition: 0.3s ease-in-out;
@@ -246,7 +251,7 @@ td {
 
 .rtx {
     background-image: url(img/things/rtx.png);
-    background-size: 130%;
+    background-size: 100%;
     background-position: center;
     width: 150px;
     height: 150px;
@@ -256,6 +261,42 @@ td {
 }
 
 .rtx a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.avermedia {
+    background-image: url(img/things/avermedia.png);
+    background-size: 100%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
+}
+
+.avermedia a {
+    text-align: center;
+    text-decoration: none;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+}
+
+.ssd {
+    background-image: url(img/things/ssd.png);
+    background-size: 100%;
+    background-position: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 1rem;
+    box-shadow: 0px 0px 5px 1px rgba(12, 12, 12, 0.5);
+    position: relative;
+}
+
+.ssd a {
     text-align: center;
     text-decoration: none;
     border-radius: 1rem;
@@ -469,6 +510,10 @@ footer h3 {
         grid-template-areas: "a a";
         gap: 1rem;
         padding-top: 1rem;
+    }
+
+    .select h2 {
+        font-size: 1.1rem;
     }
 }
 
