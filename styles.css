@@ -46,7 +46,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     background: var(--color-background-gradient-light-1);
     min-height: 100vh;
-    padding: 20px;
+    /* padding: 20px; */
     position: relative;
     /* overflow: hidden; */
 }
@@ -105,9 +105,22 @@ body::first-line {
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Это поможет разместить footer внизу */
     max-width: 500px;
+    height: 100vh;
     margin: 0 auto;
     padding: 20px;
+    width: 100%;
+}
+
+.links {
+    flex-grow: 1; /* Основное содержимое будет занимать все доступное пространство */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 10px;
     width: 100%;
 }
 
@@ -308,4 +321,24 @@ h1 {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
     text-align: center;
+}
+
+/* Стили для футера */
+.footer {
+    margin-top: 30px;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    ;
+}
+
+.footer p {
+    color: var(--color-text-light-secondary);
+    font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .footer p {
+        color: var(--color-text-secondary);
+    }
 }
