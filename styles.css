@@ -125,7 +125,7 @@ body::first-line {
 }
 
 .profile {
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
     padding: 0 10px;
     width: 100%;
     max-width: 500px;
