@@ -173,6 +173,40 @@ h1 {
     width: 100%;
 }
 
+.icon-row {
+    display: flex;
+    justify-content: space-between; /* Распределяем блоки равномерно */
+    gap: 15px;
+    padding: 0px 0;
+}
+
+.icon-only {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Устанавливаем ширину на 100% */
+    height: 60px;
+    background: var(--color-background-dark);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+    box-shadow: 0 2px 4px var(--color-shadow-light);
+    border: 2px solid transparent;
+}
+
+.icon-only img {
+    width: 40px; /* Устанавливаем размер логотипа */
+    height: 40px;
+}
+
+@media (hover: hover) {
+    .icon-only:hover {
+        transform: scale(1.01);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 8px var(--color-shadow-light-hover);
+    }
+}
+
 .link-button {
     display: flex;
     align-items: center;
@@ -277,7 +311,7 @@ h1 {
 .link-icon {
     width: 24px;
     height: 24px;
-    margin-right: 15px;
+    /* margin-right: 15px; */
     flex-shrink: 0;
     object-fit: contain;
     filter: brightness(0) invert(1);
@@ -308,7 +342,6 @@ h1 {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding-right: 24px;
 }
 
 .link-title {
