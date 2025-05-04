@@ -19,37 +19,44 @@ document.addEventListener('DOMContentLoaded', () => {
     class Star {
         constructor() {
             this.element = document.createElement('div');
-            // Увеличиваем размер звезд для лучшей видимости
-            this.size = Math.random() * 0.2 + 0.1;
+            // Уменьшаем размер звезд на мобильных устройствах
+            this.size = Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1);
             
             // Распределяем звезды по всему экрану
-            const margin = 50;
+            const margin = isMobile ? 20 : 50;
             this.x = margin + Math.random() * (window.innerWidth - margin * 2);
             this.y = margin + Math.random() * (window.innerHeight - margin * 2);
             // Начинаем с отрицательной Z для эффекта появления издалека
             this.z = -500;
             
             // Движение только вперед с небольшим разбросом
-            const spread = 0.15;
+            // Уменьшаем разброс на мобильных устройствах
+            const spread = isMobile ? 0.1 : 0.15;
             this.vx = (Math.random() - 0.5) * spread;
             this.vy = (Math.random() - 0.5) * spread;
-            this.vz = 2; // Увеличиваем скорость движения
+            // Уменьшаем скорость на мобильных устройствах
+            this.vz = isMobile ? 1.5 : 2;
             
+            // Упрощаем стили для мобильных устройств
             this.element.style.cssText = `
                 position: absolute;
                 width: ${this.size}px;
                 height: ${this.size}px;
                 background: rgba(255, 255, 255, 0.9);
                 border-radius: 50%;
-                box-shadow: 0 0 ${this.size * 3}px rgba(255, 255, 255, 0.9);
+                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 3}px rgba(255, 255, 255, 0.9);`}
                 opacity: 0;
                 transform: translate3d(${this.x}px, ${this.y}px, ${this.z}px);
-                transition: opacity 0.3s ease-in-out;
-                filter: blur(${this.size * 0.05}px);
+                transition: opacity 3s ease-in-out;
+                ${isMobile ? '' : `filter: blur(${this.size * 0.05}px);`}
             `;
             
             starContainer.appendChild(this.element);
-            setTimeout(() => this.element.style.opacity = '1', 10);
+            
+            // Важно! Используем requestAnimationFrame вместо setTimeout для более плавной анимации
+            requestAnimationFrame(() => {
+                this.element.style.opacity = '1';
+            });
         }
 
         move() {
@@ -57,31 +64,49 @@ document.addEventListener('DOMContentLoaded', () => {
             this.y += this.vy;
             this.z += this.vz;
             
-            // Увеличиваем масштаб для более заметного эффекта приближения
-            const scale = Math.max(0.1, Math.min(1, 1 + this.z / 300));
-            
             if (this.z > 1000) {
                 this.fadeOut();
                 return false;
             }
             
-            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, ${this.z}px) scale(${scale})`;
+            // Убираем scale из transform для лучшей производительности
+            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, ${this.z}px)`;
             return true;
         }
 
         fadeOut() {
-            this.element.style.opacity = '0';
-            setTimeout(() => this.element.remove(), 300);
+            // Используем requestAnimationFrame для более плавного исчезновения
+            requestAnimationFrame(() => {
+                this.element.style.opacity = '0';
+                
+                // Удаляем элемент после завершения анимации
+                setTimeout(() => this.element.remove(), 300);
+            });
         }
     }
 
     const stars = new Set();
-    const MAX_STARS = isMobile ? 150 : 500; // Увеличиваем максимальное количество звезд
+    // Уменьшаем количество звезд для мобильных устройств
+    const MAX_STARS = isMobile ? 70 : 500;
     let lastCreateTime = 0;
+
+    // Добавляем переменную для отслеживания прокрутки
+    let isScrolling = false;
+    let scrollTimeout;
+
+    // Обработчик прокрутки
+    window.addEventListener('scroll', () => {
+        isScrolling = true;
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 200);
+    });
 
     function createStar() {
         const now = Date.now();
-        if (now - lastCreateTime < 30) return; // Создаем ~20 звезд в секунду
+        // Увеличиваем интервал создания звезд для мобильных устройств
+        if (now - lastCreateTime < (isMobile ? 80 : 30)) return;
         
         if (stars.size < MAX_STARS) {
             stars.add(new Star());
@@ -90,18 +115,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function animate() {
-        createStar();
-        stars.forEach(star => {
-            if (!star.move()) {
-                stars.delete(star);
-            }
-        });
+        // Не создаем новые звезды во время прокрутки на мобильных устройствах
+        if (!(isMobile && isScrolling)) {
+            createStar();
+        }
+        
+        // Обновляем только каждый второй кадр на мобильных устройствах
+        if (!(isMobile && isScrolling)) {
+            stars.forEach(star => {
+                if (!star.move()) {
+                    stars.delete(star);
+                }
+            });
+        }
+        
         requestAnimationFrame(animate);
     }
 
-    // Создаем начальные звезды быстрее
-    for (let i = 0; i < Math.min(100, MAX_STARS); i++) {
-        setTimeout(createStar, Math.random() * 100);
+    // Создаем меньше начальных звезд на мобильных устройствах
+    for (let i = 0; i < Math.min(isMobile ? 30 : 100, MAX_STARS); i++) {
+        setTimeout(createStar, Math.random() * (isMobile ? 300 : 100));
     }
 
     animate();
@@ -113,4 +146,21 @@ document.addEventListener('DOMContentLoaded', () => {
             stars.clear();
         }
     });
+
+    // Добавляем обработчик изменения ориентации для мобильных устройств
+    if (isMobile) {
+        window.addEventListener('orientationchange', () => {
+            // Даем время на перерисовку после изменения ориентации
+            setTimeout(() => {
+                // Удаляем звезды, которые могут оказаться за пределами экрана
+                stars.forEach(star => {
+                    if (star.x < 0 || star.x > window.innerWidth || 
+                        star.y < 0 || star.y > window.innerHeight) {
+                        star.fadeOut();
+                        stars.delete(star);
+                    }
+                });
+            }, 300);
+        });
+    }
 });
