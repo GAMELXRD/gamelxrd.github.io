@@ -52,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.vx = (Math.random() - 0.5) * spread;
             this.vy = (Math.random() - 0.5) * spread;
             // Уменьшаем скорость на мобильных устройствах
-            this.vz = isMobile ? 1.5 : 2;
+            // Скорость теперь в единицах в секунду, а не в кадр
+            this.vz = isMobile ? 90 : 120;
+            this.vx *= 60; // Умножаем на 60, чтобы перевести в единицы в секунду
+            this.vy *= 60; // Умножаем на 60, чтобы перевести в единицы в секунду
             
             // Стили для контейнера
             this.container.style.cssText = `
@@ -99,10 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        move() {
-            this.x += this.vx;
-            this.y += this.vy;
-            this.z += this.vz;
+        move(deltaTime) {
+            // Используем deltaTime для расчета перемещения
+            // deltaTime в секундах, поэтому умножаем скорость на deltaTime
+            this.x += this.vx * deltaTime;
+            this.y += this.vy * deltaTime;
+            this.z += this.vz * deltaTime;
             
             if (this.z > 1000) {
                 this.fadeOut();
@@ -120,14 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.container.style.opacity = '0';
                 
                 // Удаляем элемент после завершения анимации
-                setTimeout(() => this.container.remove(), 800);
+                setTimeout(() => this.container.remove(), 400);
             });
         }
     }
 
     const stars = new Set();
     // Уменьшаем количество звезд для мобильных устройств
-    const MAX_STARS = isMobile ? 70 : 300;
+    const MAX_STARS = isMobile ? 30 : 60;
     let lastCreateTime = 0;
 
     // Добавляем переменную для отслеживания прокрутки
@@ -154,7 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function animate() {
+    // Переменные для расчета deltaTime
+    let lastTime = 0;
+
+    function animate(currentTime) {
+        // Расчет deltaTime в секундах
+        if (!lastTime) lastTime = currentTime;
+        const deltaTime = (currentTime - lastTime) / 1000; // Переводим в секунды
+        lastTime = currentTime;
+        
+        // Ограничиваем deltaTime, чтобы избежать больших скачков
+        // при переключении вкладок или низком FPS
+        const clampedDeltaTime = Math.min(deltaTime, 0.1);
+        
         // Не создаем новые звезды во время прокрутки на мобильных устройствах
         if (!(isMobile && isScrolling)) {
             createStar();
@@ -163,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Обновляем только каждый второй кадр на мобильных устройствах
         if (!(isMobile && isScrolling)) {
             stars.forEach(star => {
-                if (!star.move()) {
+                if (!star.move(clampedDeltaTime)) {
                     stars.delete(star);
                 }
             });
@@ -173,19 +190,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Создаем начальные звезды с более равномерным распределением по времени
-    const initialStarCount = Math.min(isMobile ? 30 : 100, MAX_STARS);
+    const initialStarCount = Math.min(isMobile ? 30 : 60, MAX_STARS);
     for (let i = 0; i < initialStarCount; i++) {
         // Распределяем создание звезд более равномерно
-        setTimeout(createStar, (i / initialStarCount) * (isMobile ? 1000 : 500));
+        setTimeout(createStar, (i / initialStarCount) * (isMobile ? 1000 : 1300));
     }
 
-    animate();
+    // Запускаем анимацию с передачей текущего времени
+    requestAnimationFrame(animate);
 
     // Останавливаем анимацию, когда вкладка неактивна
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stars.forEach(star => star.fadeOut());
             stars.clear();
+            // Сбрасываем lastTime при возвращении на вкладку
+            lastTime = 0;
         }
     });
 
@@ -202,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         stars.delete(star);
                     }
                 });
-            }, 300);
+            }, 100);
         });
     }
 });
