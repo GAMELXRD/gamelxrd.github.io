@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Переменные для управления отображением
     let showStars = true; // Включить/выключить отображение звезд
     let showNicknames = true; // Включить/выключить отображение никнеймов
+    const starSizeMultiplier = 3.0; // Множитель размера звезд (1.0 - стандартный размер)
+    
+    // Специальные цвета для определенных никнеймов
+    const specialColors = {
+        'Хагрид': 'rgb(255, 166, 0)', // оранжевый
+        'DEDFEAR': 'rgba(255, 224, 86, 0.85)', // красный
+        'Evil4el': 'rgba(143, 119, 252, 0.85)', // фиолетовый
+        'TVPE': 'rgba(202, 122, 255, 0.85)', // зеленый
+    };
     
     // Устанавливаем начальные состояния переключателей
     starsToggle.checked = showStars;
@@ -58,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Список случайных никнеймов для звезд
     const nicknames = [
-        '🔥 Хагрид 🔥', 'miitchull', 'DEDFEAR', 'Evil4el', 'TVPE', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat'
+        '🔥 Хагрид 🔥', 'miitchull', 'DEDFEAR', 'Evil4el', 'TVPE', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao'
     ];
 
     // Отслеживаем активные никнеймы на экране
@@ -79,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.nickText = getAvailableNickname();
             
             // Уменьшаем размер звезд на мобильных устройствах
-            this.size = Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1);
+            this.size = (Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1)) * starSizeMultiplier;
             
             // Распределяем звезды по всему экрану
             const margin = isMobile ? 20 : 50;
@@ -111,25 +120,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 transition: opacity 0.8s ease-in-out;
             `;
             
+            // Проверяем, есть ли специальный цвет для данного никнейма
+            const nicknameColor = specialColors[this.nickText] || 'rgba(255, 255, 255, 0.85)';
+            
+            // Получаем цвет для свечения (без альфа-канала)
+            // Если это RGB цвет, используем его, иначе извлекаем RGB из RGBA
+            let glowColor;
+            if (nicknameColor.startsWith('rgb(')) {
+                glowColor = nicknameColor;
+            } else if (nicknameColor.startsWith('rgba(')) {
+                // Извлекаем RGB часть из RGBA
+                glowColor = 'rgb(' + nicknameColor.substring(5, nicknameColor.lastIndexOf(',')) + ')';
+            } else {
+                // Если формат неизвестен, используем белый цвет
+                glowColor = 'rgb(255, 255, 255)';
+            }
+            
             // Упрощаем стили для звезды
             this.element.style.cssText = `
                 width: ${this.size}px;
                 height: ${this.size}px;
-                background: rgba(255, 255, 255, 0.95);
+                background: ${glowColor.replace('rgb', 'rgba').replace(')', ', 0.95)')};
                 border-radius: 50%;
-                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px rgba(255, 255, 255, 0.95);`}
+                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px ${glowColor};`}
                 ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
                 display: ${showStars ? 'block' : 'none'};
             `;
             
             // Стили для никнейма
             this.nickname.style.cssText = `
-                color: rgba(255, 255, 255, 0.85);
-                font-size: ${isMobile ? '5px' : '7px'};
+                color: ${nicknameColor};
+                font-size: ${isMobile ? '4px' : '5px'};
                 font-weight: 600;
                 margin-bottom: 3px;
                 white-space: nowrap;
-                text-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
+                text-shadow: 0 0 3px ${glowColor};
                 font-family: 'Montserrat', sans-serif;
                 display: ${showNicknames ? 'block' : 'none'};
             `;
