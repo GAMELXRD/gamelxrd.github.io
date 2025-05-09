@@ -16,9 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Определяем, является ли устройство мобильным
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+    // Список случайных никнеймов для звезд
+    const nicknames = [
+        'Viewer123', 'TwitchFan', 'GameLover', 'StreamEnjoyer', 'LoyalSub',
+        'NightOwl', 'CoolViewer', 'ChillFan', 'StreamNinja', 'GameWatcher',
+        'MoonLight', 'StarGazer', 'CosmicFan', 'GalaxyViewer', 'NebulaStar',
+        'RocketMan', 'SpaceExplorer', 'AstroFan', 'StellarViewer', 'OrbitWatcher',
+        'Follower42', 'SubLover', 'ChatEnjoyer', 'EmoteFan', 'StreamHopper',
+        'LxrdFan', 'GameLxrd', 'TwitchStar', 'KickViewer', 'YTSubscriber'
+    ];
+
     class Star {
         constructor() {
+            // Создаем контейнер для звезды и никнейма
+            this.container = document.createElement('div');
             this.element = document.createElement('div');
+            this.nickname = document.createElement('div');
+            
+            // Выбираем случайный никнейм
+            const randomNick = nicknames[Math.floor(Math.random() * nicknames.length)];
+            
             // Уменьшаем размер звезд на мобильных устройствах
             this.size = Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1);
             
@@ -37,25 +54,48 @@ document.addEventListener('DOMContentLoaded', () => {
             // Уменьшаем скорость на мобильных устройствах
             this.vz = isMobile ? 1.5 : 2;
             
-            // Упрощаем стили для мобильных устройств
-            this.element.style.cssText = `
+            // Стили для контейнера
+            this.container.style.cssText = `
                 position: absolute;
+                transform: translate3d(${this.x}px, ${this.y}px, ${this.z}px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                opacity: 0;
+                transition: opacity 0.8s ease-in-out;
+            `;
+            
+            // Упрощаем стили для звезды
+            this.element.style.cssText = `
                 width: ${this.size}px;
                 height: ${this.size}px;
                 background: rgba(255, 255, 255, 0.9);
                 border-radius: 50%;
                 ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 3}px rgba(255, 255, 255, 0.9);`}
-                opacity: 0;
-                transform: translate3d(${this.x}px, ${this.y}px, ${this.z}px);
-                transition: opacity 3s ease-in-out;
                 ${isMobile ? '' : `filter: blur(${this.size * 0.05}px);`}
             `;
             
-            starContainer.appendChild(this.element);
+            // Стили для никнейма
+            this.nickname.style.cssText = `
+                color: rgba(255, 255, 255, 0.7);
+                font-size: ${isMobile ? '6px' : '8px'};
+                margin-bottom: 3px;
+                white-space: nowrap;
+                text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+                font-family: 'Montserrat', sans-serif;
+            `;
+            
+            // Устанавливаем текст никнейма
+            this.nickname.textContent = randomNick;
+            
+            // Добавляем элементы в DOM
+            this.container.appendChild(this.nickname);
+            this.container.appendChild(this.element);
+            starContainer.appendChild(this.container);
             
             // Важно! Используем requestAnimationFrame вместо setTimeout для более плавной анимации
             requestAnimationFrame(() => {
-                this.element.style.opacity = '1';
+                this.container.style.opacity = '1';
             });
         }
 
@@ -70,24 +110,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Убираем scale из transform для лучшей производительности
-            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, ${this.z}px)`;
+            this.container.style.transform = `translate3d(${this.x}px, ${this.y}px, ${this.z}px)`;
             return true;
         }
 
         fadeOut() {
             // Используем requestAnimationFrame для более плавного исчезновения
             requestAnimationFrame(() => {
-                this.element.style.opacity = '0';
+                this.container.style.opacity = '0';
                 
                 // Удаляем элемент после завершения анимации
-                setTimeout(() => this.element.remove(), 300);
+                setTimeout(() => this.container.remove(), 800);
             });
         }
     }
 
     const stars = new Set();
     // Уменьшаем количество звезд для мобильных устройств
-    const MAX_STARS = isMobile ? 70 : 500;
+    const MAX_STARS = isMobile ? 70 : 300;
     let lastCreateTime = 0;
 
     // Добавляем переменную для отслеживания прокрутки
@@ -105,8 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createStar() {
         const now = Date.now();
-        // Увеличиваем интервал создания звезд для мобильных устройств
-        if (now - lastCreateTime < (isMobile ? 80 : 30)) return;
+        // Увеличиваем интервал создания звезд 
+        if (now - lastCreateTime < (isMobile ? 150 : 50)) return;
         
         if (stars.size < MAX_STARS) {
             stars.add(new Star());
@@ -132,9 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animate);
     }
 
-    // Создаем меньше начальных звезд на мобильных устройствах
-    for (let i = 0; i < Math.min(isMobile ? 30 : 100, MAX_STARS); i++) {
-        setTimeout(createStar, Math.random() * (isMobile ? 300 : 100));
+    // Создаем начальные звезды с более равномерным распределением по времени
+    const initialStarCount = Math.min(isMobile ? 30 : 100, MAX_STARS);
+    for (let i = 0; i < initialStarCount; i++) {
+        // Распределяем создание звезд более равномерно
+        setTimeout(createStar, (i / initialStarCount) * (isMobile ? 1000 : 500));
     }
 
     animate();
