@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Переменные для управления отображением
-    let showStars = true; // Звезды всегда отображаются
-    let showNicknames = Math.random() < 0.25; // 25% шанс отображения никнеймов
+    const showNicknamesOnly = Math.random() < 0.25; // 25% шанс отображения только никнеймов
+    let showStars = !showNicknamesOnly; // Звезды отображаются, только если не выпал шанс на никнеймы
+    let showNicknames = showNicknamesOnly; // Никнеймы отображаются, только если выпал шанс
     const starSizeMultiplier = 3.0; // Множитель размера звезд (1.0 - стандартный размер)
     
     // Специальные цвета для определенных никнеймов
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 border-radius: 50%;
                 ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px ${glowColor};`}
                 ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
-                display: block; // Звезды всегда отображаются
+                display: ${showStars ? 'block' : 'none'};
             `;
             
             // Стили для никнейма
