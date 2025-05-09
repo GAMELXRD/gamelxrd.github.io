@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Получаем элементы переключателей
-    const starsToggle = document.getElementById('starsToggle');
-    const nicknamesToggle = document.getElementById('nicknamesToggle');
-    
     // Переменные для управления отображением
-    let showStars = true; // Включить/выключить отображение звезд
-    let showNicknames = true; // Включить/выключить отображение никнеймов
+    let showStars = true; // Звезды всегда отображаются
+    let showNicknames = Math.random() < 0.25; // 25% шанс отображения никнеймов
     const starSizeMultiplier = 3.0; // Множитель размера звезд (1.0 - стандартный размер)
     
     // Специальные цвета для определенных никнеймов
@@ -15,38 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'Evil4el': 'rgba(143, 119, 252, 0.85)', // фиолетовый
         'TVPE': 'rgba(202, 122, 255, 0.85)', // зеленый
     };
-    
-    // Устанавливаем начальные состояния переключателей
-    starsToggle.checked = showStars;
-    nicknamesToggle.checked = showNicknames;
-    
-    // Обработчики событий для переключателей
-    starsToggle.addEventListener('change', () => {
-        showStars = starsToggle.checked;
-        updateStarsVisibility();
-    });
-    
-    nicknamesToggle.addEventListener('change', () => {
-        showNicknames = nicknamesToggle.checked;
-        updateNicknamesVisibility();
-    });
-    
-    // Функция для обновления видимости звезд
-    function updateStarsVisibility() {
-        document.querySelectorAll('.star-element').forEach(star => {
-            star.style.display = showStars ? 'block' : 'none';
-        });
-    }
-    
-    // Функция для обновления видимости никнеймов
-    function updateNicknamesVisibility() {
-        document.querySelectorAll('.star-nickname').forEach(nickname => {
-            nickname.style.display = showNicknames ? 'block' : 'none';
-        });
-    }
-    
-    // Если и звезды, и никнеймы отключены, прекращаем выполнение
-    if (!showStars && !showNicknames) return;
     
     const starContainer = document.createElement('div');
     starContainer.style.cssText = `
@@ -144,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 border-radius: 50%;
                 ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px ${glowColor};`}
                 ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
-                display: ${showStars ? 'block' : 'none'};
+                display: block; // Звезды всегда отображаются
             `;
             
             // Стили для никнейма
