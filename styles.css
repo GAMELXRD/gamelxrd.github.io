@@ -53,7 +53,7 @@ body::first-line {
 
 .profile {
     /* margin-bottom: 30px; */
-    padding: 0 10px;
+    padding: 10px 10px;
     width: 100%;
     max-width: 500px;
     margin-left: auto;
@@ -96,8 +96,8 @@ body::first-line {
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 /* 
 @keyframes glow {
@@ -168,6 +168,8 @@ body::first-line {
 
 .profile-info {
     text-align: left;
+    flex: 1;
+    margin-left: 15px;
 }
 
 h1 {
@@ -431,4 +433,104 @@ h1 {
 
 .rating-row .link-button {
     width: 50%;
+}
+
+/* Стили для переключателей звезд и никнеймов */
+.star-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 20px;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.toggle-label {
+    color: white;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+/* Стиль для переключателя */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Медиа-запрос для мобильных устройств */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-info {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .star-toggles {
+        margin-left: 0;
+        margin-top: 15px;
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .toggle-container {
+        margin: 0 10px;
+    }
 }

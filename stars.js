@@ -1,4 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Получаем элементы переключателей
+    const starsToggle = document.getElementById('starsToggle');
+    const nicknamesToggle = document.getElementById('nicknamesToggle');
+    
+    // Переменные для управления отображением
+    let showStars = true; // Включить/выключить отображение звезд
+    let showNicknames = true; // Включить/выключить отображение никнеймов
+    
+    // Устанавливаем начальные состояния переключателей
+    starsToggle.checked = showStars;
+    nicknamesToggle.checked = showNicknames;
+    
+    // Обработчики событий для переключателей
+    starsToggle.addEventListener('change', () => {
+        showStars = starsToggle.checked;
+        updateStarsVisibility();
+    });
+    
+    nicknamesToggle.addEventListener('change', () => {
+        showNicknames = nicknamesToggle.checked;
+        updateNicknamesVisibility();
+    });
+    
+    // Функция для обновления видимости звезд
+    function updateStarsVisibility() {
+        document.querySelectorAll('.star-element').forEach(star => {
+            star.style.display = showStars ? 'block' : 'none';
+        });
+    }
+    
+    // Функция для обновления видимости никнеймов
+    function updateNicknamesVisibility() {
+        document.querySelectorAll('.star-nickname').forEach(nickname => {
+            nickname.style.display = showNicknames ? 'block' : 'none';
+        });
+    }
+    
+    // Если и звезды, и никнеймы отключены, прекращаем выполнение
+    if (!showStars && !showNicknames) return;
+    
     const starContainer = document.createElement('div');
     starContainer.style.cssText = `
         position: fixed;
@@ -18,13 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Список случайных никнеймов для звезд
     const nicknames = [
-        'Viewer123', 'TwitchFan', 'GameLover', 'StreamEnjoyer', 'LoyalSub',
-        'NightOwl', 'CoolViewer', 'ChillFan', 'StreamNinja', 'GameWatcher',
-        'MoonLight', 'StarGazer', 'CosmicFan', 'GalaxyViewer', 'NebulaStar',
-        'RocketMan', 'SpaceExplorer', 'AstroFan', 'StellarViewer', 'OrbitWatcher',
-        'Follower42', 'SubLover', 'ChatEnjoyer', 'EmoteFan', 'StreamHopper',
-        'LxrdFan', 'GameLxrd', 'TwitchStar', 'KickViewer', 'YTSubscriber'
+        '🔥 Хагрид 🔥', 'miitchull', 'DEDFEAR', 'Evil4el', 'TVPE', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat'
     ];
+
+    // Отслеживаем активные никнеймы на экране
+    const activeNicknames = new Set();
 
     class Star {
         constructor() {
@@ -33,8 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
             this.element = document.createElement('div');
             this.nickname = document.createElement('div');
             
-            // Выбираем случайный никнейм
-            const randomNick = nicknames[Math.floor(Math.random() * nicknames.length)];
+            // Добавляем классы для элементов (для управления видимостью)
+            this.element.classList.add('star-element');
+            this.nickname.classList.add('star-nickname');
+            
+            // Выбираем случайный никнейм, который еще не используется
+            this.nickText = getAvailableNickname();
             
             // Уменьшаем размер звезд на мобильных устройствах
             this.size = Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1);
@@ -43,8 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const margin = isMobile ? 20 : 50;
             this.x = margin + Math.random() * (window.innerWidth - margin * 2);
             this.y = margin + Math.random() * (window.innerHeight - margin * 2);
-            // Начинаем с отрицательной Z для эффекта появления издалека
-            this.z = -500;
+            
+            // Начинаем с разных Z-координат для более равномерного распределения
+            this.z = -500 + Math.random() * 300;
             
             // Движение только вперед с небольшим разбросом
             // Уменьшаем разброс на мобильных устройствах
@@ -72,24 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
             this.element.style.cssText = `
                 width: ${this.size}px;
                 height: ${this.size}px;
-                background: rgba(255, 255, 255, 0.9);
+                background: rgba(255, 255, 255, 0.95);
                 border-radius: 50%;
-                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 3}px rgba(255, 255, 255, 0.9);`}
-                ${isMobile ? '' : `filter: blur(${this.size * 0.05}px);`}
+                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px rgba(255, 255, 255, 0.95);`}
+                ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
+                display: ${showStars ? 'block' : 'none'};
             `;
             
             // Стили для никнейма
             this.nickname.style.cssText = `
-                color: rgba(255, 255, 255, 0.7);
-                font-size: ${isMobile ? '6px' : '8px'};
+                color: rgba(255, 255, 255, 0.85);
+                font-size: ${isMobile ? '5px' : '7px'};
+                font-weight: 600;
                 margin-bottom: 3px;
                 white-space: nowrap;
-                text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+                text-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
                 font-family: 'Montserrat', sans-serif;
+                display: ${showNicknames ? 'block' : 'none'};
             `;
             
             // Устанавливаем текст никнейма
-            this.nickname.textContent = randomNick;
+            this.nickname.textContent = this.nickText;
             
             // Добавляем элементы в DOM
             this.container.appendChild(this.nickname);
@@ -120,6 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         fadeOut() {
+            // Освобождаем никнейм для повторного использования
+            activeNicknames.delete(this.nickText);
+            
             // Используем requestAnimationFrame для более плавного исчезновения
             requestAnimationFrame(() => {
                 this.container.style.opacity = '0';
@@ -130,9 +179,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Функция для получения доступного никнейма
+    function getAvailableNickname() {
+        // Создаем массив доступных никнеймов (тех, которые не используются)
+        const availableNicknames = nicknames.filter(nick => !activeNicknames.has(nick));
+        
+        // Если все никнеймы используются, возвращаем случайный из всего списка
+        if (availableNicknames.length === 0) {
+            return nicknames[Math.floor(Math.random() * nicknames.length)];
+        }
+        
+        // Выбираем случайный никнейм из доступных
+        const selectedNick = availableNicknames[Math.floor(Math.random() * availableNicknames.length)];
+        
+        // Добавляем его в список активных
+        activeNicknames.add(selectedNick);
+        
+        return selectedNick;
+    }
+
     const stars = new Set();
-    // Уменьшаем количество звезд для мобильных устройств
-    const MAX_STARS = isMobile ? 30 : 60;
+    // Устанавливаем максимальное количество звезд равным количеству никнеймов
+    // Но ограничиваем для мобильных устройств
+    const MAX_STARS = isMobile ? Math.min(30, nicknames.length) : nicknames.length;
     let lastCreateTime = 0;
 
     // Добавляем переменную для отслеживания прокрутки
@@ -150,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createStar() {
         const now = Date.now();
-        // Увеличиваем интервал создания звезд 
-        if (now - lastCreateTime < (isMobile ? 150 : 50)) return;
+        // Уменьшаем интервал создания звезд для более равномерного появления
+        if (now - lastCreateTime < (isMobile ? 100 : 30)) return;
         
         if (stars.size < MAX_STARS) {
             stars.add(new Star());
@@ -189,11 +258,19 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animate);
     }
 
-    // Создаем начальные звезды с более равномерным распределением по времени
+    // Создаем начальные звезды с более равномерным распределением по времени и пространству
+    // Ограничиваем количество начальных звезд количеством никнеймов
     const initialStarCount = Math.min(isMobile ? 30 : 60, MAX_STARS);
+    
+    // Создаем начальные звезды с разными Z-координатами для равномерного распределения
     for (let i = 0; i < initialStarCount; i++) {
-        // Распределяем создание звезд более равномерно
-        setTimeout(createStar, (i / initialStarCount) * (isMobile ? 1000 : 1300));
+        // Создаем звезды сразу, но с разными начальными позициями
+        setTimeout(() => {
+            const star = new Star();
+            // Устанавливаем разные Z-координаты для начальных звезд
+            star.z = -500 + (i / initialStarCount) * 1500;
+            stars.add(star);
+        }, Math.random() * 500); // Небольшая случайная задержка для более естественного появления
     }
 
     // Запускаем анимацию с передачей текущего времени
@@ -202,7 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Останавливаем анимацию, когда вкладка неактивна
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            stars.forEach(star => star.fadeOut());
+            stars.forEach(star => {
+                // Освобождаем все никнеймы
+                activeNicknames.delete(star.nickText);
+                star.fadeOut();
+            });
             stars.clear();
             // Сбрасываем lastTime при возвращении на вкладку
             lastTime = 0;
@@ -218,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 stars.forEach(star => {
                     if (star.x < 0 || star.x > window.innerWidth || 
                         star.y < 0 || star.y > window.innerHeight) {
+                        // Освобождаем никнейм
+                        activeNicknames.delete(star.nickText);
                         star.fadeOut();
                         stars.delete(star);
                     }
