@@ -205,10 +205,11 @@ async function searchGames(query) {
     if (query.length < 3) return [];
     
     try {
-        // Используем наш прокси на Netlify вместо corsproxy.io
-        const proxyUrl = 'https://gamelxrdcalculatorproxy.netlify.app/api/proxy?endpoint=search&search=';
+        // Используем corsproxy.io как прокси для обхода CORS
+        const proxyUrl = 'https://corsproxy.io/?';
+        const apiUrl = `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(query)}&page_size=5`;
         
-        const response = await fetch(proxyUrl + encodeURIComponent(query));
+        const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
         const data = await response.json();
         
         return data.results || [];
@@ -221,10 +222,13 @@ async function searchGames(query) {
 // Функция для получения детальной информации об игре
 async function getGameDetails(gameId) {
     try {
-        // Используем наш прокси на Netlify
-        const proxyUrl = `https://gamelxrdcalculatorproxy.netlify.app/api/proxy?endpoint=details&gameId=${gameId}&lang=ru`;
+        // Добавляем параметр lang=ru для получения данных на русском языке
+        const apiUrl = `https://api.rawg.io/api/games/${gameId}?key=${RAWG_API_KEY}&lang=ru`;
         
-        const response = await fetch(proxyUrl);
+        // Используем прокси для обхода CORS
+        const proxyUrl = 'https://corsproxy.io/?';
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
         return await response.json();
     } catch (error) {
         console.error('Ошибка при получении деталей игры:', error);
