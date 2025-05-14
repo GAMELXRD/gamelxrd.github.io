@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор заказа игр | GAMELXRD</title>
+    <link rel="shortcut icon" href="logo.png" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="stars.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <div class="profile-header">
+                <img src="ebalo.png" alt="Фото профиля" class="profile-image">
+                <div class="profile-info">
+                    <h1>gamelxrd</h1>
+                    <p class="bio">Калькулятор заказа игр</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calculator-container">
+            <h2 class="calculator-title">Рассчитать стоимость </br> заказа игры</h2>
+            
+            <div class="game-search-container">
+                <div class="form-group search-group">
+                    <label for="game-search">Название игры:</label>
+                    <div class="search-input-container">
+                        <input type="text" id="game-search" placeholder="Начните вводить название игры...">
+                        <div id="search-results" class="search-results"></div>
+                        <div id="loader-container" class="loader-container">
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                    <div class="game-info-container">
+                        <div class="game-cover-container" id="cover-container" style="display: none;">
+                            <img id="game-cover" src="placeholder.png" alt="Обложка игры">
+                        </div>
+                        <div id="game-description" class="game-description" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="game-length">Примерная длительность (часов):</label>
+                <div class="length-container">
+                    <input type="number" id="game-length" min="1" value="6">
+                    <a id="hltb-link" class="hltb-link" target="_blank" rel="noopener noreferrer" style="display: none;">HLTB</a>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="game-genres">Жанры:</label>
+                <input type="text" id="game-genres" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="game-tags">Теги:</label>
+                <div class="tags-container">
+                    <div id="tags-list" class="tags-list"></div>
+                    <div class="tags-buttons">
+                        <button id="toggle-tags" class="toggle-tags-btn" title="Показать все теги">⋯</button>
+                        <button id="reset-tags" class="reset-tags-btn" title="Сбросить теги">↺</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="game-rating">Оценка:</label>
+                <input type="text" id="game-rating" readonly>
+            </div>
+            
+            <button class="calculate-btn" onclick="calculatePrice()">ИТОГО</button>
+            
+            <!-- Заменяем строку с блоком результатов -->
+            <div class="result" id="result">
+                <div id="total-price">Примерная стоимость: <span>0</span> ₽</div>
+                <div class="price-breakdown" id="price-breakdown"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Сделано с 💖 <span style="font-weight: 800;">gamelxrd</span></p>
+            <p style="padding-top: 3px;">27.04.2025</p>
+        </div>
+    </div>
+    
+    <!-- Подключаем внешний JavaScript файл -->
+    <script src="calculator.js"></script>
+</body>
+</html>

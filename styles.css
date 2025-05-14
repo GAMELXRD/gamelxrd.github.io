@@ -6,7 +6,7 @@
     --color-text-dark-secondary: #999;
     
     --color-background-light: #ffffff;
-    --color-background-dark: rgba(255, 255, 255, 0.05);
+    --color-background-dark: rgba(97, 97, 97, 0.1);
     --color-background-gradient-light-1: #0a0a0a;
     --color-background-gradient-light-2: #000000;
     --color-background-gradient-dark-1: #000000;
@@ -533,4 +533,347 @@ input:checked + .slider:before {
     .toggle-container {
         margin: 0 10px;
     }
+}
+
+
+
+
+
+/* Стили для калькулятора */
+.calculator-container {
+    background-color: var(--color-background-dark);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    transition: all 0.4s ease-in-out;
+}
+
+.calculator-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+    font-weight: 500;
+}
+
+select, input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #2a2a35;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.calculate-btn {
+    background: linear-gradient(135deg, #6e57e0, #9b59b6);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif; /* Добавляем это свойство */
+}
+
+.calculate-btn:hover {
+    background: linear-gradient(135deg, #7d68e0, #a66bbf);
+    transform: translateY(-2px);
+}
+
+/* Стили для анимации блока результатов */
+.result {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s ease-in-out;
+    margin-top: 0;
+}
+
+.result.visible {
+    max-height: 300px; /* Достаточно большое значение для любого содержимого */
+    opacity: 1;
+    margin-top: 15px;
+}
+
+/* Обновляем существующие стили для блока результатов */
+#total-price {
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.5);
+    border-radius: 8px;
+    color: #fff;
+    text-align: center;
+    font-weight: 500;
+}
+
+.price-breakdown {
+    margin-top: 15px;
+    text-align: left;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Стили для поиска игр */
+.search-input-container {
+    position: relative;
+}
+
+/* Стили для индикатора загрузки */
+.loader-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #2a2a35;
+    border: 1px solid #444;
+    border-radius: 8px;
+    margin-top: 5px;
+    padding: 15px;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(110, 87, 224, 0.3);
+    border-radius: 50%;
+    border-top-color: #6e57e0;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Стили для анимации появления списка результатов */
+.search-results {
+    position: absolute;
+    color: #ffffff;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #2a2a35;
+    border: 1px solid #444;
+    border-radius: 8px;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000; /* Высокий z-index, чтобы отображаться поверх других элементов */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.search-results.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.game-result {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.game-result:hover {
+    background-color: #3a3a45;
+}
+
+.no-results {
+    padding: 10px 15px;
+    color: #aaa;
+    text-align: center;
+}
+
+/* Стили для отображения поиска и обложки */
+.search-cover-container {
+    display: flex;
+    margin-top: 15px;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.game-cover-container, .game-description {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.game-cover-container.visible, .game-description.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.game-cover-container {
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.game-cover-container img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.game-info-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    align-items: flex-start;
+}
+
+.game-description {
+    flex-grow: 1;
+    color: #ccc;
+    font-size: 0.9em;
+    line-height: 1.4;
+    text-align: justify;
+    margin: 0;
+}
+
+.length-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Стили для анимации кнопки HLTB */
+.hltb-link {
+    color: #2196f3;
+    text-decoration: none;
+    font-size: 0.9em;
+    padding: 2px 8px;
+    background-color: rgba(110, 87, 224, 0.1);
+    align-self: normal;
+    align-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hltb-link.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.hltb-link:hover {
+    background-color: rgba(128, 106, 238, 0.2);
+    color: #80c6ff;
+}
+
+input[readonly] {
+    background-color: #222230;
+    cursor: default;
+}
+
+/* Стили для текста о договорной цене */
+.negotiate-text {
+    margin-top: 20px;
+    text-align: center;
+    /* font-style: italic; */
+    color: #9b59b6;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    padding: 8px;
+    border-top: 1px solid rgba(155, 89, 182, 0.3);
+}
+
+.negotiate-text.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Стили для контейнера тегов */
+.tags-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    background-color: #222230;
+    border-radius: 8px;
+    padding: 5px 10px;
+    border: 1px solid #444;
+}
+
+.tags-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 1;
+    min-height: 30px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 2px 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tag:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tag::after {
+    content: '×';
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.toggle-tags-btn, .reset-tags-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.toggle-tags-btn:hover, .reset-tags-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-tags-btn.active {
+    background-color: rgba(255, 255, 255, 0.2);
 }

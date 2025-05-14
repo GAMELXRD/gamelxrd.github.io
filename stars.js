@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 font-weight: 600;
                 margin-bottom: 3px;
                 white-space: nowrap;
-                text-shadow: 0 0 3px ${glowColor};
+                text-shadow: 0 0 2px ${glowColor};
                 font-family: 'Montserrat', sans-serif;
                 display: ${showNicknames ? 'block' : 'none'};
             `;
