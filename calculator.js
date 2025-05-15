@@ -382,7 +382,7 @@ async function selectGame(game) {
         const hltbLink = document.getElementById('hltb-link');
         const hltbSearchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(game.name)}`;
         hltbLink.href = hltbSearchUrl;
-        hltbLink.style.display = 'inline-block';
+        // hltbLink.style.display = 'inline-block';
 
         // Добавляем подсказку
         if (!hltbLink.querySelector('.hltb-tooltip')) {
@@ -427,7 +427,7 @@ async function selectGame(game) {
         
         steamLink.href = steamUrl;
         steamLink.target = '_blank';
-        steamLink.style.display = 'inline-block';
+        // steamLink.style.display = 'inline-block';
         
         // Добавляем кнопку в контейнер поиска, если её ещё нет
         const searchContainer = document.querySelector('.search-input-container');
