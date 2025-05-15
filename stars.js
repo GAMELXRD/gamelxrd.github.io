@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             // Проверяем, есть ли специальный цвет для данного никнейма
-            const nicknameColor = specialColors[this.nickText] || 'rgba(255, 255, 255, 0.85)';
+            const nicknameColor = specialColors[this.nickText] || 'rgba(255, 255, 255, 0.95)';
             
             // Получаем цвет для свечения (без альфа-канала)
             // Если это RGB цвет, используем его, иначе извлекаем RGB из RGBA
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.element.style.cssText = `
                 width: ${this.size}px;
                 height: ${this.size}px;
-                background: ${glowColor.replace('rgb', 'rgba').replace(')', ', 0.95)')};
+                background: ${glowColor.replace('rgb', 'rgba').replace(')', ', 0.85)')};
                 border-radius: 50%;
                 ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px ${glowColor};`}
                 ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stars = new Set();
     // Устанавливаем максимальное количество звезд равным количеству никнеймов
     // Но ограничиваем для мобильных устройств
-    const MAX_STARS = isMobile ? Math.min(30, nicknames.length) : nicknames.length;
+    const MAX_STARS = isMobile ? Math.min(15, nicknames.length) : nicknames.length;
     let lastCreateTime = 0;
 
     // Добавляем переменную для отслеживания прокрутки

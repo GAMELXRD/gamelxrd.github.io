@@ -11,20 +11,20 @@ function calculatePrice() {
     
     // Проверяем, является ли игра хоррором или соревновательной
     if (gameType === 'horror') {
-        hourlyRate = 250;
-        breakdown.push(`Хоррор: 250 ₽/час`);
+        hourlyRate = 220;
+        breakdown.push(`Хоррор: 220 ₽/час`);
     } else if (gameType === 'competitive') {
         hourlyRate = 130;
         breakdown.push(`Соревновательная/Battle Royale: 130 ₽/час`);
     } else {
         switch(gameType) {
             case 'indie':
-                hourlyRate = 150;
-                breakdown.push(`Инди: 150 ₽/час`);
+                hourlyRate = 160;
+                breakdown.push(`Инди: 160 ₽/час`);
                 break;
             case 'aa':
-                hourlyRate = 160;
-                breakdown.push(`AA-игра: 160 ₽/час`);
+                hourlyRate = 170;
+                breakdown.push(`AA-игра: 170 ₽/час`);
                 break;
             case 'aaa':
                 hourlyRate = 180;
@@ -57,8 +57,30 @@ function calculatePrice() {
     }
     
     // Округляем итоговую стоимость
-    totalPrice = Math.round(totalPrice);
+    totalPrice = Math.floor(totalPrice / 10) * 10;
     
+    // --- НОВЫЙ КРИТЕРИЙ: увеличение стоимости при низкой оценке ---
+    let ratingIncrease = 0;
+    let rawgRating = null;
+    if (lastSelectedGame && typeof lastSelectedGame.rating === 'number') {
+        rawgRating = lastSelectedGame.rating;
+        if (rawgRating < 2.8) {
+            ratingIncrease = 0.15;
+            breakdown.push('Низкая оценка (меньше 2.8): +15% к стоимости');
+        } else if (rawgRating < 3.5) {
+            ratingIncrease = 0.05;
+            breakdown.push('Низкая оценка (меньше 3.5): +5% к стоимости');
+        }
+    }
+    if (ratingIncrease > 0) {
+        const increaseAmount = Math.round(totalPrice * ratingIncrease);
+        totalPrice += increaseAmount;
+        breakdown.push(`Сумма надбавки: ${increaseAmount} ₽`);
+    }
+
+    // Округляем итоговую стоимость после надбавки
+    totalPrice = Math.floor(totalPrice / 10) * 10;
+
     // Добавляем итоговую строку
     breakdown.push(`Итого: ${totalPrice} ₽`);
     
@@ -76,7 +98,7 @@ function calculatePrice() {
     negotiateText.className = 'negotiate-text';
     negotiateText.innerHTML = 'Не нравится цена? Давай договоримся 😄';
     
-    // Проверяем, существует ли уже элемент с классом negotiate-text
+    // Удаляем предыдущий negotiate-text, если есть
     const existingNegotiateText = document.querySelector('.negotiate-text');
     if (existingNegotiateText) {
         existingNegotiateText.remove();
@@ -85,7 +107,28 @@ function calculatePrice() {
     // Добавляем элемент в конец блока результатов
     resultElement.appendChild(negotiateText);
     
+    // --- ДОБАВЛЯЕМ КНОПКУ "ЗАКАЗАТЬ" ---
+    // Удаляем предыдущую кнопку, если есть
+    const existingOrderButton = document.querySelector('.order-button');
+    if (existingOrderButton) {
+        existingOrderButton.remove();
+    }
+    
+    const orderButton = document.createElement('a');
+    orderButton.href = 'https://new.donatepay.ru/@gamelxrd';
+    orderButton.target = '_blank';
+    orderButton.className = 'order-button negotiate-text'; // чтобы исчезала вместе с negotiate-text
+    orderButton.textContent = 'ЗАКАЗАТЬ';
+    // Добавляем кнопку после negotiateText
+    resultElement.appendChild(orderButton);
+
     // Добавляем анимацию появления с задержкой
+    setTimeout(() => {
+        negotiateText.classList.add('visible');
+        orderButton.classList.add('visible');
+    }, 500);
+
+    // Отображаем анимацию появления с задержкой
     setTimeout(() => {
         negotiateText.classList.add('visible');
     }, 500);
@@ -282,6 +325,7 @@ async function selectGame(game) {
     if (gameDetails) {
         // Сохраняем данные игры для использования при расчете цены
         lastSelectedGame = gameDetails;
+        cacheGame(gameDetails); // Кешируем игру
         
         // Добавляем отладочные сообщения
         console.log('Данные игры RAWG:', gameDetails);
@@ -339,11 +383,62 @@ async function selectGame(game) {
         const hltbSearchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(game.name)}`;
         hltbLink.href = hltbSearchUrl;
         hltbLink.style.display = 'inline-block';
+
+        // Добавляем подсказку
+        if (!hltbLink.querySelector('.hltb-tooltip')) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'hltb-tooltip';
+            tooltip.textContent = 'Проверь время здесь';
+            hltbLink.appendChild(tooltip);
+        }
         
         // Добавляем класс для анимации после небольшой задержки
         setTimeout(() => {
             hltbLink.classList.add('visible');
         }, 200); // Задержка больше, чем у обложки и описания для эффекта каскада
+
+        // Добавляем обработчик клика для скрытия подсказки
+        hltbLink.addEventListener('click', function() {
+            const tooltip = this.querySelector('.hltb-tooltip');
+            if (tooltip) {
+                tooltip.style.opacity = '0';
+                tooltip.style.visibility = 'hidden';
+            }
+        }, { once: true }); // Используем { once: true }, чтобы обработчик сработал только один раз
+        
+        // --- ДОБАВЛЯЕМ КНОПКУ STEAM ---
+        // Создаем ссылку на Steam
+        const steamLink = document.getElementById('steam-link') || document.createElement('a');
+        steamLink.id = 'steam-link';
+        steamLink.textContent = 'STEAM';
+        steamLink.className = 'steam-link'; // Используем тот же класс для стилей
+        
+        // Пытаемся найти прямую ссылку на Steam из данных игры
+        let steamUrl = `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`;
+        if (gameDetails.stores && gameDetails.stores.length > 0) {
+            // Ищем магазин Steam в списке магазинов
+            const steamStore = gameDetails.stores.find(store => 
+                store.store && (store.store.id === 1 || store.store.name.toLowerCase() === 'steam'));
+            
+            if (steamStore && steamStore.url) {
+                steamUrl = steamStore.url;
+            }
+        }
+        
+        steamLink.href = steamUrl;
+        steamLink.target = '_blank';
+        steamLink.style.display = 'inline-block';
+        
+        // Добавляем кнопку в контейнер поиска, если её ещё нет
+        const searchContainer = document.querySelector('.search-input-container');
+        if (!document.getElementById('steam-link')) {
+            searchContainer.appendChild(steamLink);
+        }
+        
+        // Добавляем класс для анимации после небольшой задержки
+        setTimeout(() => {
+            steamLink.classList.add('visible');
+        }, 250); // Задержка чуть больше, чем у HLTB для эффекта каскада
         
         // Устанавливаем жанры
         const genres = gameDetails.genres.map(g => g.name).join(', ');
@@ -360,9 +455,30 @@ async function selectGame(game) {
             clearTags();
         }
         
-        // Устанавливаем оценку
-        const rating = gameDetails.metacritic ? `${gameDetails.metacritic}/100` : 'Нет данных';
-        document.getElementById('game-rating').value = rating;
+        // Устанавливаем Metacritic
+        const metacriticValue = gameDetails.metacritic || 'Нет данных';
+        document.getElementById('game-metacritic').value = metacriticValue;
+
+        // Устанавливаем оценку из RAWG rating
+        const ratingElement = document.getElementById('game-rating');
+        if (gameDetails.rating) {
+            const rating = gameDetails.rating.toFixed(1);
+            ratingElement.value = `${rating}`;
+            
+            // Добавляем цветовую градацию
+            ratingElement.classList.remove('rating-low', 'rating-medium', 'rating-high');
+            
+            if (rating < 3.0) {
+                ratingElement.classList.add('rating-low');
+            } else if (rating < 4.0) {
+                ratingElement.classList.add('rating-medium');
+            } else {
+                ratingElement.classList.add('rating-high');
+            }
+        } else {
+            ratingElement.value = 'Нет данных';
+            ratingElement.classList.remove('rating-low', 'rating-medium', 'rating-high');
+        }
     }
 }
 
@@ -378,11 +494,21 @@ function displayTags(tags) {
     const maxVisibleTags = showAllTags ? tags.length : 5;
     const displayTags = tags.slice(0, maxVisibleTags);
     
+    // Проверяем, был ли Horror тег до отображения новых тегов
+    const hadHorrorTag = lastSelectedGame && lastSelectedGame.tags && 
+        lastSelectedGame.tags.some(t => t.name.toLowerCase() === 'horror' || t.name.toLowerCase() === 'ужасы');
+    
     displayTags.forEach(tag => {
         const tagElement = document.createElement('div');
         tagElement.className = 'tag';
         tagElement.textContent = tag.name;
         tagElement.dataset.id = tag.id;
+
+        // Проверяем, является ли тег хоррором
+        const isHorrorTag = tag.name.toLowerCase() === 'horror' || tag.name.toLowerCase() === 'ужасы';
+        if (isHorrorTag) {
+            tagElement.classList.add('horror-tag');
+        }
         
         // Добавляем обработчик клика для удаления тега
         tagElement.addEventListener('click', function() {
@@ -402,12 +528,7 @@ function displayTags(tags) {
                 // Проверяем, есть ли еще теги, которые можно показать (только в режиме сокращенного отображения)
                 if (!showAllTags && lastSelectedGame.tags.length > document.querySelectorAll('.tag').length) {
                     // Показываем следующий тег из списка
-                    const visibleTagIds = Array.from(document.querySelectorAll('.tag')).map(el => parseInt(el.dataset.id));
-                    const nextTag = lastSelectedGame.tags.find(t => !visibleTagIds.includes(t.id));
-                    
-                    if (nextTag) {
-                        displayNextTag(nextTag);
-                    }
+                    displayNextAvailableTag();
                 }
             }
         });
@@ -415,8 +536,68 @@ function displayTags(tags) {
         tagsContainer.appendChild(tagElement);
     });
     
+    // Проверяем, появился ли Horror тег после отображения новых тегов
+    const hasHorrorTag = Array.from(document.querySelectorAll('.tag')).some(
+        tag => tag.textContent.toLowerCase() === 'horror' || tag.textContent.toLowerCase() === 'ужасы'
+    );
+    
+    // Если статус Horror тега изменился и результат уже отображается, выполняем перерасчет
+    // Добавляем проверку на showAllTags, чтобы перерасчет работал в обоих режимах отображения
+    if (hadHorrorTag !== hasHorrorTag && document.getElementById('result').classList.contains('visible')) {
+        calculatePrice();
+    }
+    
     // Обновляем текст и состояние кнопки переключения тегов
     updateToggleTagsButton();
+}
+
+// Функция для отображения следующего доступного тега
+function displayNextAvailableTag() {
+    if (!lastSelectedGame || !lastSelectedGame.tags) return;
+    
+    const tagsContainer = document.getElementById('tags-list');
+    const visibleTagIds = Array.from(document.querySelectorAll('.tag')).map(el => parseInt(el.dataset.id));
+    
+    // Находим первый тег, который еще не отображается
+    const nextTag = lastSelectedGame.tags.find(t => !visibleTagIds.includes(t.id));
+    
+    if (nextTag) {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.textContent = nextTag.name;
+        tagElement.dataset.id = nextTag.id;
+        
+        // Проверяем, является ли тег хоррором
+        const isHorrorTag = nextTag.name.toLowerCase() === 'horror' || nextTag.name.toLowerCase() === 'ужасы';
+        if (isHorrorTag) {
+            tagElement.classList.add('horror-tag');
+        }
+        
+        // Добавляем обработчик клика для удаления тега
+        tagElement.addEventListener('click', function() {
+            // Сохраняем информацию о том, был ли это тег Horror
+            const isHorrorTag = nextTag.name.toLowerCase() === 'horror' || nextTag.name.toLowerCase() === 'ужасы';
+            this.remove();
+            
+            // Обновляем lastSelectedGame.tags, удаляя выбранный тег
+            if (lastSelectedGame && lastSelectedGame.tags) {
+                const tagId = parseInt(this.dataset.id);
+                lastSelectedGame.tags = lastSelectedGame.tags.filter(t => t.id !== tagId);
+                
+                // Если был удален тег Horror и результат уже отображается, пересчитываем стоимость
+                if (isHorrorTag && document.getElementById('result').classList.contains('visible')) {
+                    calculatePrice();
+                }
+                
+                // Проверяем, есть ли еще теги, которые можно показать
+                if (!showAllTags && lastSelectedGame.tags.length > document.querySelectorAll('.tag').length) {
+                    displayNextAvailableTag();
+                }
+            }
+        });
+        
+        tagsContainer.appendChild(tagElement);
+    }
 }
 
 // Функция для обновления текста и состояния кнопки переключения тегов
@@ -447,8 +628,35 @@ function toggleAllTags() {
 
 // Функция для очистки тегов
 function clearTags() {
+    // Проверяем наличие тега Horror перед очисткой
+    const hadHorrorTag = Array.from(document.querySelectorAll('.tag')).some(
+        tag => tag.textContent.toLowerCase() === 'horror' || tag.textContent.toLowerCase() === 'ужасы'
+    );
+    
+    // Очищаем контейнер тегов
     const tagsContainer = document.getElementById('tags-list');
     tagsContainer.innerHTML = '';
+    
+    // Восстанавливаем оригинальные теги
+    if (lastSelectedGame && originalGameTags.length > 0) {
+        lastSelectedGame.tags = [...originalGameTags];
+        
+        // Проверяем, появился ли тег Horror после восстановления
+        const hasHorrorTag = originalGameTags.some(
+            tag => tag.name.toLowerCase() === 'horror' || tag.name.toLowerCase() === 'ужасы'
+        );
+        
+        // Отображаем восстановленные теги
+        displayTags(originalGameTags);
+        
+        // Если статус тега Horror изменился и результат отображается, выполняем перерасчет
+        if (hadHorrorTag !== hasHorrorTag && document.getElementById('result').classList.contains('visible')) {
+            calculatePrice();
+        }
+    }
+    
+    // Обновляем состояние кнопки переключения тегов
+    updateToggleTagsButton();
 }
 
 // Функция для сброса тегов к оригинальным
@@ -536,8 +744,23 @@ async function displayGameDetails(gameId) {
         // Устанавливаем жанры
         const genres = gameDetails.genres.map(g => g.name).join(', ');
         document.getElementById('game-genres').value = genres;
+
+        // Устанавливаем теги
+        if (gameDetails.tags && gameDetails.tags.length > 0) {
+            // Сохраняем оригинальные теги
+            originalGameTags = [...gameDetails.tags];
+            // Отображаем теги
+            displayTags(gameDetails.tags);
+        } else {
+            // Очищаем теги, если их нет
+            clearTags();
+        }
         
-        // Устанавливаем оценку
+        // Устанавливаем Metacritic
+        const metacriticValue = gameDetails.metacritic || 'Нет данных';
+        document.getElementById('game-metacritic').value = metacriticValue;
+
+        // Устанавливаем оценку (сохраняем текущее поведение)
         const rating = gameDetails.metacritic ? `${gameDetails.metacritic}/100` : 'Нет данных';
         document.getElementById('game-rating').value = rating;
     }
@@ -549,6 +772,13 @@ function clearGameDetails() {
     const coverContainer = document.getElementById('cover-container');
     const gameDescription = document.getElementById('game-description');
     const hltbLink = document.getElementById('hltb-link');
+    if (hltbLink) {
+        const tooltip = hltbLink.querySelector('.hltb-tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
+        hltbLink.classList.remove('visible');
+    }
     
     if (coverContainer) coverContainer.classList.remove('visible');
     if (gameDescription) gameDescription.classList.remove('visible');
@@ -577,6 +807,13 @@ function clearGameDetails() {
 // Обновляем обработчик события для поля поиска
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('game-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                resetAllFields();
+            }
+        });
+    }
     const gameLengthInput = document.getElementById('game-length');
     const resetTagsButton = document.getElementById('reset-tags');
     const toggleTagsButton = document.getElementById('toggle-tags');
@@ -666,5 +903,130 @@ window.addEventListener('resize', function() {
             : description;
         
         descriptionElement.innerHTML = shortDescription;
+    }
+});
+
+
+function resetAllFields() {
+    lastSelectedGame = null;
+    originalGameTags = [];
+
+    // Скрыть обложку и описание
+    const coverContainer = document.getElementById('cover-container');
+    if (coverContainer) {
+        coverContainer.classList.remove('visible');
+        setTimeout(() => { coverContainer.style.display = 'none'; }, 300);
+    }
+    const descriptionElement = document.getElementById('game-description');
+    if (descriptionElement) {
+        descriptionElement.classList.remove('visible');
+        setTimeout(() => { descriptionElement.style.display = 'none'; }, 300);
+    }
+    const hltbLink = document.getElementById('hltb-link');
+    if (hltbLink) {
+        hltbLink.classList.remove('visible');
+        setTimeout(() => { hltbLink.style.display = 'none'; }, 300);
+    }
+    
+    // Скрываем кнопку Steam
+    const steamLink = document.getElementById('steam-link');
+    if (steamLink) {
+        steamLink.classList.remove('visible');
+        setTimeout(() => { steamLink.style.display = 'none'; }, 300);
+    }
+
+    // Сбросить значения полей
+    const lengthInput = document.getElementById('game-length');
+    if (lengthInput) lengthInput.value = '6';
+    const genresInput = document.getElementById('game-genres');
+    if (genresInput) genresInput.value = '';
+    const metacriticInput = document.getElementById('game-metacritic');
+    if (metacriticInput) metacriticInput.value = '';
+    const ratingElement = document.getElementById('game-rating');
+    if (ratingElement) {
+        ratingElement.value = '';
+        ratingElement.classList.remove('rating-low', 'rating-medium', 'rating-high');
+    }
+
+    // Сбросить теги
+    clearTags && clearTags();
+
+    // Скрыть результат
+    const resultElement = document.getElementById('result');
+    if (resultElement && resultElement.classList.contains('visible')) {
+        resultElement.classList.remove('visible');
+    }
+}
+
+// Ключ для хранения кеша в localStorage
+const RECENT_GAMES_KEY = 'recentGames';
+const RECENT_GAMES_LIMIT = 4;
+
+// Сохраняем игру в кеш
+function cacheGame(game) {
+    let recentGames = JSON.parse(localStorage.getItem(RECENT_GAMES_KEY)) || [];
+    // Удаляем, если уже есть такая игра
+    recentGames = recentGames.filter(g => g.id !== game.id);
+    // Добавляем в начало
+    recentGames.unshift({
+        id: game.id,
+        name: game.name,
+        background_image: game.background_image || '',
+        rating: game.rating || null
+    });
+    // Обрезаем до лимита
+    if (recentGames.length > RECENT_GAMES_LIMIT) {
+        recentGames = recentGames.slice(0, RECENT_GAMES_LIMIT);
+    }
+    localStorage.setItem(RECENT_GAMES_KEY, JSON.stringify(recentGames));
+}
+
+// Получаем последние игры из кеша
+function getRecentGames() {
+    return JSON.parse(localStorage.getItem(RECENT_GAMES_KEY)) || [];
+}
+
+// Показываем выпадающий список последних игр
+function showRecentGamesDropdown() {
+    const recentGames = getRecentGames();
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = '';
+    if (recentGames.length === 0) return;
+    recentGames.forEach(game => {
+        const gameElement = document.createElement('div');
+        gameElement.className = 'game-result recent-game';
+        gameElement.textContent = game.name + (game.rating ? ` (${game.rating})` : '');
+        gameElement.addEventListener('click', () => {
+            selectGame(game);
+            resultsContainer.style.display = 'none';
+        });
+        resultsContainer.appendChild(gameElement);
+    });
+    resultsContainer.style.display = 'block';
+    setTimeout(() => {
+        resultsContainer.classList.add('visible');
+    }, 10);
+}
+
+// Показываем последние игры при фокусе на поле поиска, если оно пустое
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('game-search');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim() === '') {
+                showRecentGamesDropdown();
+            }
+        });
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                showRecentGamesDropdown();
+            }
+        });
+        // Скрываем выпадающий список при потере фокуса
+        searchInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                document.getElementById('search-results').style.display = 'none';
+            }, 200);
+        });
     }
 });

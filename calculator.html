@@ -13,7 +13,7 @@
     <div class="container">
         <div class="profile">
             <div class="profile-header">
-                <img src="ebalo.png" alt="Фото профиля" class="profile-image">
+                <a href="index.html"><img src="ebalo.png" alt="Фото профиля" class="profile-image"></a>
                 <div class="profile-info">
                     <h1>gamelxrd</h1>
                     <p class="bio">Калькулятор заказа игр</p>
@@ -27,8 +27,9 @@
             <div class="game-search-container">
                 <div class="form-group search-group">
                     <label for="game-search">Название игры:</label>
-                    <div class="search-input-container">
+                    <div class="length-container search-input-container">
                         <input type="text" id="game-search" placeholder="Начните вводить название игры...">
+                        <a id="steam-link" class="hltb-link" target="_blank" rel="noopener noreferrer" style="display: none;">STEAM</a>
                         <div id="search-results" class="search-results"></div>
                         <div id="loader-container" class="loader-container">
                             <div class="loader"></div>
@@ -66,10 +67,16 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="game-rating">Оценка:</label>
-                <input type="text" id="game-rating" readonly>
+
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="game-metacritic">Metacritic:</label>
+                    <input type="text" id="game-metacritic" readonly>
+                </div>
+                <div class="form-group half">
+                    <label for="game-rating">Оценка:</label>
+                    <input type="text" id="game-rating" readonly>
+                </div>
             </div>
             
             <button class="calculate-btn" onclick="calculatePrice()">ИТОГО</button>
