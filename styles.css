@@ -314,6 +314,41 @@ h1 {
     }
 }
 
+/* Light theme styles */
+@media (prefers-color-scheme: light) {
+    body {
+        background: var(--color-background-gradient-dark-1);
+    }
+    
+    h1 {
+        color: var(--color-text-light);
+    }
+    
+    .bio {
+        color: var(--color-text-light-secondary);
+    }
+    
+    .link-button {
+        background: var(--color-background-dark);
+        color: var(--color-text-light);
+        backdrop-filter: blur(5px);
+    }
+    
+    .link-button i {
+        color: var(--color-text-light);
+    }
+    
+    .link-description {
+        color: var(--color-text-dark-secondary);
+    }
+    
+    .profile-image {
+        border-color: var(--color-border-light-transparent);
+        box-shadow: 0 0 10px var(--color-shadow-dark);
+    }
+}
+
+/* Dark theme styles */
 @media (prefers-color-scheme: dark) {
     body {
         background: var(--color-background-gradient-dark-1);
