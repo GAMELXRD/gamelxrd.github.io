@@ -11,8 +11,8 @@ function calculatePrice() {
     
     // Проверяем, является ли игра хоррором или соревновательной
     if (gameType === 'horror') {
-        hourlyRate = 220;
-        breakdown.push(`Хоррор: 220 ₽/час`);
+        hourlyRate = 200;
+        breakdown.push(`Хоррор: 200 ₽/час`);
     } else if (gameType === 'competitive') {
         hourlyRate = 130;
         breakdown.push(`Соревновательная/Battle Royale: 130 ₽/час`);
