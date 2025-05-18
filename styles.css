@@ -933,7 +933,7 @@ input[readonly] {
 }
 
 .order-button {
-    background: linear-gradient(135deg, #4CAF50, #166119);
+    background: linear-gradient(135deg, #fda015, #f58300);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -951,7 +951,7 @@ input[readonly] {
 }
 
 .order-button:hover {
-    background: linear-gradient(135deg, #4CAF50, #2d8830);
+    background: linear-gradient(135deg, #ffb649, #fc9534);
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }

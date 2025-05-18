@@ -115,7 +115,7 @@ function calculatePrice() {
     }
     
     const orderButton = document.createElement('a');
-    orderButton.href = 'https://new.donatepay.ru/@gamelxrd';
+    orderButton.href = 'https://www.donationalerts.com/r/gamelxrd';
     orderButton.target = '_blank';
     orderButton.className = 'order-button negotiate-text'; // чтобы исчезала вместе с negotiate-text
     orderButton.textContent = 'ЗАКАЗАТЬ';
