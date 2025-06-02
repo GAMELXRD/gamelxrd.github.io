@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Список случайных никнеймов для звезд
     const nicknames = [
-        '🔥 Хагрид 🔥', 'miitchull', 'DEDFEAR', 'Evil4el', 'TVPE', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao'
+        'Хагрид', 'miitchull', 'DEDFEAR', 'Evil4el', '⎛⎝>⏝⏝<⎛⎝', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao', 'dizzzyboy_', 'сиська папича'
     ];
 
     // Специальные цвета для определенных никнеймов
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Хагрид': 'rgb(255, 166, 0)',
         'DEDFEAR': 'rgba(255, 224, 86, 0.85)', 
         'Evil4el': 'rgba(143, 119, 252, 0.85)',
-        'TVPE': 'rgba(202, 122, 255, 0.85)',
+        '⎛⎝>⏝⏝<⎛⎝': 'rgba(202, 122, 255, 0.85)',
     };
 
     // Отслеживаем активные никнеймы на экране
