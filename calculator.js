@@ -252,7 +252,7 @@ async function searchGames(query) {
         const apiUrl = `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(query)}&page_size=5`;
         
         // Новый адрес: мы обращаемся к НАШЕЙ функции и передаем ей нужный URL как параметр
-        const proxyUrl = `/.netlify/functions/rawg?url=${encodeURIComponent(apiUrl)}`;
+        const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?url=${encodeURIComponent(apiUrl)}`;
         
         const response = await fetch(proxyUrl);
         const data = await response.json();
@@ -271,7 +271,7 @@ async function getGameDetails(gameId) {
         const apiUrl = `https://api.rawg.io/api/games/${gameId}?key=${RAWG_API_KEY}&lang=ru`;
         
         // Новый адрес: снова обращаемся к НАШЕЙ функции
-        const proxyUrl = `/.netlify/functions/rawg?url=${encodeURIComponent(apiUrl)}`;
+        const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?url=${encodeURIComponent(apiUrl)}`;
         
         const response = await fetch(proxyUrl);
         return await response.json();
