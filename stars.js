@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'DEDFEAR': 'rgba(255, 224, 86, 0.85)', 
         'Evil4el': 'rgba(143, 119, 252, 0.85)',
         '⎛⎝>⏝⏝<⎛⎝': 'rgba(202, 122, 255, 0.85)',
+        'dizzzyboy_': 'rgba(245, 84, 35, 0.85)',
     };
 
     // Отслеживаем активные никнеймы на экране
