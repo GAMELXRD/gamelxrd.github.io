@@ -1,0 +1,11 @@
+# Файл: netlify.toml
+
+[build]
+  # Эта команда говорит Netlify, что у нас простой статический сайт без шага сборки
+  command = "echo 'No build command'"
+  # Говорим, что все файлы сайта лежат в корне
+  publish = "."
+
+[functions]
+  # Это самая важная строка. Указываем, где лежат функции.
+  directory = "netlify/functions"

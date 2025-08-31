@@ -1,0 +1,23 @@
+{
+  "name": "links",
+  "version": "1.0.0",
+  "description": "Style Playing Above Completion Everytime",
+  "main": "calculator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GAMELXRD/gamelxrd.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GAMELXRD/gamelxrd.github.io/issues"
+  },
+  "homepage": "https://github.com/GAMELXRD/gamelxrd.github.io#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
