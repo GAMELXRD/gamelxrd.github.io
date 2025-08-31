@@ -1,35 +1,41 @@
-// Содержимое файла /netlify/functions/rawg.js
+const ALLOWED_ORIGIN = 'https://gamelxrd.github.io';
 
 exports.handler = async (event) => {
-  // 1. Получаем URL игрового API, который передал наш калькулятор
-  const apiUrl = event.queryStringParameters.url;
-
-  // 2. Если URL не передали, возвращаем ошибку
-  if (!apiUrl) {
+  // 1. Обработка "предварительного" запроса (Preflight OPTIONS)
+  if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL is required' }),
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: '',
     };
   }
 
-  try {
-    // 3. Динамически импортируем библиотеку для совершения запросов (нужна для серверной среды)
-    const fetch = (await import('node-fetch')).default;
+  // 2. Основная логика
+  const apiUrl = event.queryStringParameters.url;
 
-    // 4. Наш "помощник" делает запрос к настоящему API RAWG
+  if (!apiUrl) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'URL is required' }) };
+  }
+
+  try {
+    const fetch = (await import('node-fetch')).default;
     const response = await fetch(apiUrl);
     const data = await response.json();
 
-    // 5. Отправляем полученные данные обратно в калькулятор
+    // 3. Добавляем заголовок в основной ответ
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Этот заголовок на всякий случай, если будешь вызывать функцию с другого домена
+        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     };
   } catch (error) {
-    // В случае ошибки, сообщаем об этом
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to fetch data from RAWG API' }),
