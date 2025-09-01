@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = 'https://gamelxrd.github.io';
+const ALLOWED_ORIGIN = 'https://gamelxrd.space';
 
 exports.handler = async (event) => {
   // 1. Обработка "предварительного" запроса (Preflight OPTIONS)
