@@ -332,7 +332,7 @@ async function selectGame(game) {
         const gamePriceInput = document.getElementById('game-price');
         gamePriceInput.value = 0;
 
-        // --- УМНАЯ СИСТЕМА ПОЛУЧЕНИЯ ЦЕНЫ ---
+        // --- "СУПЕР ПЛАН Б": УМНАЯ СИСТЕМА ПОЛУЧЕНИЯ ЦЕНЫ ---
         let steamAppId = null;
         if (gameDetails.stores) {
             const steamStore = gameDetails.stores.find(store => store.store && store.store.slug === 'steam');
@@ -344,19 +344,27 @@ async function selectGame(game) {
             }
         }
         
-        // Готовим запрос к нашей функции
         let proxyUrl = 'https://gamelxrd.netlify.app/.netlify/functions/rawg?';
         let queryParams = '';
 
-        // План А: если есть Steam App ID, используем его
+        // План А: если есть Steam App ID, используем его (самый точный метод)
         if (steamAppId) {
             console.log(`План А: Найден Steam App ID (${steamAppId}). Ищем по нему.`);
             queryParams = `steamAppId=${steamAppId}`;
         } 
-        // План Б: если ID нет, используем название игры
+        // Супер План Б: если ID нет, используем название + год релиза
         else {
-            console.log(`План Б: Steam App ID не найден. Ищем по названию "${game.name}".`);
-            queryParams = `gameName=${encodeURIComponent(game.name)}`;
+            let searchName = game.name;
+            // Уточняем название игры, добавляя год релиза
+            if (gameDetails.released) {
+                const releaseYear = gameDetails.released.substring(0, 4);
+                // Добавляем год, только если его еще нет в названии
+                if (!searchName.includes(releaseYear)) {
+                    searchName = `${searchName} (${releaseYear})`;
+                }
+            }
+            console.log(`План Б: Steam App ID не найден. Ищем по уточненному названию "${searchName}".`);
+            queryParams = `gameName=${encodeURIComponent(searchName)}`;
         }
         
         try {
