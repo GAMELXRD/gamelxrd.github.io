@@ -61,13 +61,33 @@ exports.handler = async (event) => {
       console.log(`[Функция]: УСПЕХ! Найден Steam App ID: ${steamAppId}`);
 
       // Этап 2: Используем App ID для поиска в ITAD
+      const itadUrl = `https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&shop=steam&game_id=${encodeURIComponent(gameIdForItad)}`;
       console.log(`[Функция]: Шаг 2.1 - Ищу данные для app/${steamAppId}`);
       const gameIdForItad = `app/${steamAppId}`;
-      const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&shop=steam&game_id=${encodeURIComponent(gameIdForItad)}`);
+      console.log(`[Функция]: Шаг 2.2 - Отправляю запрос в ITAD: ${itadUrl}`);
+      const plainResponse = await fetch(itadUrl);
       if (!plainResponse.ok) {
-        console.error('[Функция]: Ошибка ITAD API:', plainResponse.status);
+        const errorData = await plainResponse.json().catch(() => ({}));
+        console.error('[Функция]: Ошибка ITAD API:', plainResponse.status, 'Детали:', JSON.stringify(errorData));
         return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
       }
+      const plainData = await plainResponse.json();
+      if (!plainData.data || !plainData.data.plain) {
+        console.log(`[Функция]: ПРОВАЛ! ITAD не вернул plain для app/${steamAppId}. Пробую поиск по названию.`);
+      const searchResponse = await fetch(`https://api.isthereanydeal.com/v01/search/search/?key=${ITAD_API_KEY}&q=${encodeURIComponent(normalizedGameName)}`);
+      if (!searchResponse.ok) {
+        console.error('[Функция]: Ошибка ITAD поиска:', searchResponse.status);
+        return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
+      }
+      const searchData = await searchResponse.json();
+      const matchedGame = searchData.data.results.find(result => result.shop.id === 'steam');
+      if (!matchedGame) {
+        console.log('[Функция]: ПРОВАЛ! ITAD поиск не нашел игру в Steam.');
+        return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
+      }
+      const gamePlain = matchedGame.plain;
+      console.log(`[Функция]: УСПЕХ! Найден plain через поиск: ${gamePlain}`);
+      } else {
       const plainData = await plainResponse.json();
       if (!plainData.data || !plainData.data.plain) {
         console.log(`[Функция]: ПРОВАЛ! ITAD не вернул plain для app/${steamAppId}.`);
@@ -75,6 +95,7 @@ exports.handler = async (event) => {
       }
       const gamePlain = plainData.data.plain;
       console.log(`[Функция]: УСПЕХ! Plain: ${gamePlain}`);
+    }
 
       // Этап 3: Получаем цену в KZT и конвертируем в RUB
       console.log(`[Функция]: Шаг 3.1 - Запрашиваю цены для "${gamePlain}" в регионе KZ.`);
