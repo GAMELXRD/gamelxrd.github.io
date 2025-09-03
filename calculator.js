@@ -7,15 +7,11 @@ function calculatePrice() {
     
     let breakdown = [];
     
-    // --- Шаг 2: Расчет базовой стоимости по часам (как и раньше) ---
+    // --- Шаг 2: Расчет стоимости УСЛУГИ (как и раньше) ---
     let hourlyRate = 0;
-    if (gameType === 'horror') {
-        hourlyRate = 200;
-        breakdown.push(`Хоррор: 200 ₽/час`);
-    } else if (gameType === 'competitive') {
-        hourlyRate = 130;
-        breakdown.push(`Соревновательная/Battle Royale: 130 ₽/час`);
-    } else {
+    if (gameType === 'horror') { hourlyRate = 200; breakdown.push(`Хоррор: 200 ₽/час`); }
+    else if (gameType === 'competitive') { hourlyRate = 130; breakdown.push(`Соревновательная: 130 ₽/час`); }
+    else {
         switch(gameType) {
             case 'indie': hourlyRate = 160; breakdown.push(`Инди: 160 ₽/час`); break;
             case 'aa': hourlyRate = 170; breakdown.push(`AA-игра: 170 ₽/час`); break;
@@ -23,17 +19,18 @@ function calculatePrice() {
         }
     }
     
-    let totalPrice = hourlyRate * gameLength;
+    // Считаем стоимость работы
+    let servicePrice = hourlyRate * gameLength;
     breakdown.push(`Длительность: ${gameLength} ч`);
     
-    // --- Шаг 3: Применение скидок и наценок (как и раньше) ---
+    // Применяем скидки и наценки к стоимости РАБОТЫ
     let discount = 0;
     if (gameLength > 48) { discount = 0.2; breakdown.push(`Скидка: 20% (для игр > 48 часов)`); }
     else if (gameLength > 24) { discount = 0.1; breakdown.push(`Скидка: 10% (для игр > 24 часов)`); }
     
     if (discount > 0) {
-        const discountAmount = totalPrice * discount;
-        totalPrice -= discountAmount;
+        const discountAmount = servicePrice * discount;
+        servicePrice -= discountAmount;
         breakdown.push(`Сумма скидки: ${Math.round(discountAmount)} ₽`);
     }
     
@@ -44,24 +41,25 @@ function calculatePrice() {
         else if (rawgRating < 3.5) { ratingIncrease = 0.05; breakdown.push('Низкая оценка (< 3.5): +5%'); }
     }
     if (ratingIncrease > 0) {
-        const increaseAmount = Math.round(totalPrice * ratingIncrease);
-        totalPrice += increaseAmount;
+        const increaseAmount = Math.round(servicePrice * ratingIncrease);
+        servicePrice += increaseAmount;
         breakdown.push(`Сумма надбавки: ${increaseAmount} ₽`);
     }
 
-    // --- Шаг 4: !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ !!! ---
-    // Итоговая цена - это ВСЕГДА максимум из рассчитанной стоимости и цены игры.
-    // Это гарантирует, что цена не будет ниже стоимости игры, и КОРРЕКТНО реагирует на ручной ввод.
-    let finalPrice = Math.max(totalPrice, gamePrice);
-
-    if (gamePrice > 0 && totalPrice < gamePrice) {
-        breakdown.push(`<b>Стоимость поднята до цены игры</b>`);
+    // --- Шаг 3: !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ: ПРИБАВЛЯЕМ СТОИМОСТЬ ИГРЫ !!! ---
+    
+    // Добавляем стоимость игры в детализацию для прозрачности
+    if (gamePrice > 0) {
+        breakdown.push(`<b>Плюс стоимость игры: ${gamePrice} ₽</b>`);
     }
+    
+    // Итоговая цена = Стоимость услуги + Стоимость игры
+    let finalPrice = servicePrice + gamePrice;
 
-    // Округляем итоговую стоимость ПОСЛЕ всех манипуляций
+    // Округляем итоговую стоимость
     finalPrice = Math.ceil(finalPrice / 10) * 10;
 
-    // --- Шаг 5: Отображение результата (как и раньше) ---
+    // --- Шаг 4: Отображение результата ---
     breakdown.push(`<b>Итого: ${finalPrice} ₽</b>`);
     
     const resultElement = document.getElementById('result');
