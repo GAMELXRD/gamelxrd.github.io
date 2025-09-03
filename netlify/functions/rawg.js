@@ -35,7 +35,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    // --- План А: Ищем игру по Steam App ID (самый надежный) ---
+    // План А: Ищем игру по Steam App ID (самый надежный)
     if (steamAppId) {
       const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&shop=steam&game_id=app%2F${steamAppId}`);
       const plainData = await plainResponse.json();
@@ -44,9 +44,10 @@ exports.handler = async (event) => {
       }
     }
 
-    // --- План Б: Если по ID не нашли, ищем по названию (запасной вариант) ---
+    // План Б: Если по ID не нашли, ищем по названию (запасной вариант)
     if (!gamePlain && gameName) {
-      const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&title=${encodeURIComponent(gameName)}`);
+      // *** УЛУЧШЕНИЕ: Добавляем подсказку `shop=steam`, чтобы улучшить поиск ***
+      const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&title=${encodeURIComponent(gameName)}&shop=steam`);
       const plainData = await plainResponse.json();
       if (plainData.data && plainData.data.plain) {
         gamePlain = plainData.data.plain;
