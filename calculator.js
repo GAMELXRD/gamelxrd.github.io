@@ -858,6 +858,12 @@ function clearGameDetails() {
 // Обновляем обработчик события для поля поиска
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('game-search');
+    const gameLengthInput = document.getElementById('game-length');
+    // --- НОВАЯ СТРОКА: Находим поле с ценой игры ---
+    const gamePriceInput = document.getElementById('game-price'); 
+    const resetTagsButton = document.getElementById('reset-tags');
+    const toggleTagsButton = document.getElementById('toggle-tags');
+
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             if (this.value.trim() === '') {
@@ -865,26 +871,64 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    const gameLengthInput = document.getElementById('game-length');
-    const resetTagsButton = document.getElementById('reset-tags');
-    const toggleTagsButton = document.getElementById('toggle-tags');
     
-    // Добавляем обработчик события для кнопки сброса тегов
+    // Добавляем обработчик для кнопки сброса тегов
     if (resetTagsButton) {
         resetTagsButton.addEventListener('click', resetTags);
     }
     
-    // Добавляем обработчик события для кнопки переключения тегов
+    // Добавляем обработчик для кнопки переключения тегов
     if (toggleTagsButton) {
         toggleTagsButton.addEventListener('click', toggleAllTags);
     }
     
-    // Добавляем обработчик события для поля длительности
+    // Обработчик для поля длительности (он у тебя уже был)
     if (gameLengthInput) {
         gameLengthInput.addEventListener('input', function() {
-            // Если игра выбрана и результат уже отображается, пересчитываем стоимость
+            // Если результат уже отображается, пересчитываем стоимость
             if (lastSelectedGame && document.getElementById('result').classList.contains('visible')) {
                 calculatePrice();
+            }
+        });
+    }
+
+    // --- НОВЫЙ БЛОК: Добавляем обработчик для поля с ценой игры ---
+    if (gamePriceInput) {
+        gamePriceInput.addEventListener('input', function() {
+            // Пересчитываем стоимость, только если результат уже виден
+            if (document.getElementById('result').classList.contains('visible')) {
+                calculatePrice();
+            }
+        });
+    }
+    // --- КОНЕЦ НОВОГО БЛОКА ---
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(async function(e) {
+            const query = e.target.value.trim();
+            
+            document.getElementById('result').classList.remove('visible');
+            clearGameDetails();
+            
+            if (query.length < 3) {
+                document.getElementById('search-results').style.display = 'none';
+                document.getElementById('loader-container').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('loader-container').style.display = 'block';
+            
+            const games = await searchGames(query);
+            
+            document.getElementById('loader-container').style.display = 'none';
+            displaySearchResults(games);
+        }, 200));
+        
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput && !e.target.closest('.search-results')) {
+                document.getElementById('search-results').style.display = 'none';
+                document.getElementById('search-results').classList.remove('visible');
             }
         });
     }
