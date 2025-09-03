@@ -907,36 +907,6 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('input', debounce(async function(e) {
             const query = e.target.value.trim();
             
-            document.getElementById('result').classList.remove('visible');
-            clearGameDetails();
-            
-            if (query.length < 3) {
-                document.getElementById('search-results').style.display = 'none';
-                document.getElementById('loader-container').style.display = 'none';
-                return;
-            }
-            
-            document.getElementById('search-results').style.display = 'none';
-            document.getElementById('loader-container').style.display = 'block';
-            
-            const games = await searchGames(query);
-            
-            document.getElementById('loader-container').style.display = 'none';
-            displaySearchResults(games);
-        }, 200));
-        
-        document.addEventListener('click', function(e) {
-            if (e.target !== searchInput && !e.target.closest('.search-results')) {
-                document.getElementById('search-results').style.display = 'none';
-                document.getElementById('search-results').classList.remove('visible');
-            }
-        });
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce(async function(e) {
-            const query = e.target.value.trim();
-            
             // Скрываем результат расчета при вводе нового названия игры
             document.getElementById('result').classList.remove('visible');
             
