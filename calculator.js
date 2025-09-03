@@ -322,16 +322,32 @@ async function selectGame(game) {
     document.getElementById('game-search').value = game.name;
     document.getElementById('search-results').style.display = 'none';
     
-    // Получаем детальную информацию об игре из RAWG на русском языке
     const gameDetails = await getGameDetails(game.id);
     
     if (gameDetails) {
-        // Сохраняем данные игры для использования при расчете цены
         lastSelectedGame = gameDetails;
-        cacheGame(gameDetails); // Кешируем игру
-        
-        // Добавляем отладочные сообщения
+        cacheGame(gameDetails);
         console.log('Данные игры RAWG:', gameDetails);
+        
+        const gamePriceInput = document.getElementById('game-price');
+        gamePriceInput.value = 0; // Сбрасываем поле цены перед запросом
+
+        // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Запрашиваем цену через ITAD по названию игры ---
+        try {
+            const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?gameName=${encodeURIComponent(game.name)}`;
+            const response = await fetch(proxyUrl);
+            const data = await response.json();
+            
+            if (data.price > 0) {
+                console.log(`Найдена цена через ITAD: ${data.price}`);
+                // Округляем цену до целого числа на всякий случай
+                gamePriceInput.value = Math.round(data.price);
+            } else {
+                console.log('Не удалось найти цену через ITAD, либо игра бесплатна.');
+            }
+        } catch (error) {
+            console.error('Ошибка при получении цены из ITAD:', error);
+        }
         
         // Устанавливаем обложку игры и показываем контейнер
         const coverContainer = document.getElementById('cover-container');
