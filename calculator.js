@@ -1,15 +1,14 @@
 // Функция расчета цены
 function calculatePrice() {
-    // Получаем значения из формы
-    // Тип игры определяется внутренне при выборе игры
+    // --- Шаг 1: Получаем все значения из формы ---
     const gameType = determineGameType(lastSelectedGame) || 'indie';
     const gameLength = parseInt(document.getElementById('game-length').value);
+    const gamePrice = parseFloat(document.getElementById('game-price').value) || 0;
     
-    // Почасовые ставки по типу игры
-    let hourlyRate = 0;
     let breakdown = [];
     
-    // Проверяем, является ли игра хоррором или соревновательной
+    // --- Шаг 2: Расчет базовой стоимости по часам (как и раньше) ---
+    let hourlyRate = 0;
     if (gameType === 'horror') {
         hourlyRate = 200;
         breakdown.push(`Хоррор: 200 ₽/час`);
@@ -18,59 +17,31 @@ function calculatePrice() {
         breakdown.push(`Соревновательная/Battle Royale: 130 ₽/час`);
     } else {
         switch(gameType) {
-            case 'indie':
-                hourlyRate = 160;
-                breakdown.push(`Инди: 160 ₽/час`);
-                break;
-            case 'aa':
-                hourlyRate = 170;
-                breakdown.push(`AA-игра: 170 ₽/час`);
-                break;
-            case 'aaa':
-                hourlyRate = 180;
-                breakdown.push(`AAA-игра: 180 ₽/час`);
-                break;
+            case 'indie': hourlyRate = 160; breakdown.push(`Инди: 160 ₽/час`); break;
+            case 'aa': hourlyRate = 170; breakdown.push(`AA-игра: 170 ₽/час`); break;
+            case 'aaa': hourlyRate = 180; breakdown.push(`AAA-игра: 180 ₽/час`); break;
         }
     }
     
-    // Рассчитываем базовую стоимость
     let totalPrice = hourlyRate * gameLength;
-    
-    // Добавляем информацию о длительности
     breakdown.push(`Длительность: ${gameLength} ч`);
     
-    // Применяем скидки для длительных игр
+    // --- Шаг 3: Применение скидок и наценок (как и раньше) ---
     let discount = 0;
-    if (gameLength > 48) {
-        discount = 0.2; // 20% скидка
-        breakdown.push(`Скидка: 20% (для игр длительностью более 48 часов)`);
-    } else if (gameLength > 24) {
-        discount = 0.1; // 10% скидка
-        breakdown.push(`Скидка: 10% (для игр длительностью более 24 часов)`);
-    }
+    if (gameLength > 48) { discount = 0.2; breakdown.push(`Скидка: 20% (для игр > 48 часов)`); }
+    else if (gameLength > 24) { discount = 0.1; breakdown.push(`Скидка: 10% (для игр > 24 часов)`); }
     
-    // Применяем скидку, если она есть
     if (discount > 0) {
         const discountAmount = totalPrice * discount;
-        totalPrice = totalPrice - discountAmount;
+        totalPrice -= discountAmount;
         breakdown.push(`Сумма скидки: ${Math.round(discountAmount)} ₽`);
     }
     
-    // Округляем итоговую стоимость
-    totalPrice = Math.floor(totalPrice / 10) * 10;
-    
-    // --- НОВЫЙ КРИТЕРИЙ: увеличение стоимости при низкой оценке ---
     let ratingIncrease = 0;
-    let rawgRating = null;
     if (lastSelectedGame && typeof lastSelectedGame.rating === 'number') {
-        rawgRating = lastSelectedGame.rating;
-        if (rawgRating < 2.8) {
-            ratingIncrease = 0.15;
-            breakdown.push('Низкая оценка (меньше 2.8): +15% к стоимости');
-        } else if (rawgRating < 3.5) {
-            ratingIncrease = 0.05;
-            breakdown.push('Низкая оценка (меньше 3.5): +5% к стоимости');
-        }
+        const rawgRating = lastSelectedGame.rating;
+        if (rawgRating < 2.8) { ratingIncrease = 0.15; breakdown.push('Низкая оценка (< 2.8): +15%'); }
+        else if (rawgRating < 3.5) { ratingIncrease = 0.05; breakdown.push('Низкая оценка (< 3.5): +5%'); }
     }
     if (ratingIncrease > 0) {
         const increaseAmount = Math.round(totalPrice * ratingIncrease);
@@ -78,59 +49,50 @@ function calculatePrice() {
         breakdown.push(`Сумма надбавки: ${increaseAmount} ₽`);
     }
 
-    // Округляем итоговую стоимость после надбавки
-    totalPrice = Math.floor(totalPrice / 10) * 10;
+    // --- Шаг 4: !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ !!! ---
+    // Итоговая цена - это ВСЕГДА максимум из рассчитанной стоимости и цены игры.
+    // Это гарантирует, что цена не будет ниже стоимости игры, и КОРРЕКТНО реагирует на ручной ввод.
+    let finalPrice = Math.max(totalPrice, gamePrice);
 
-    // Добавляем итоговую строку
-    breakdown.push(`Итого: ${totalPrice} ₽`);
+    if (gamePrice > 0 && totalPrice < gamePrice) {
+        breakdown.push(`<b>Стоимость поднята до цены игры</b>`);
+    }
+
+    // Округляем итоговую стоимость ПОСЛЕ всех манипуляций
+    finalPrice = Math.ceil(finalPrice / 10) * 10;
+
+    // --- Шаг 5: Отображение результата (как и раньше) ---
+    breakdown.push(`<b>Итого: ${finalPrice} ₽</b>`);
     
-    // Отображаем результат с анимацией
     const resultElement = document.getElementById('result');
     resultElement.classList.add('visible');
-    document.getElementById('total-price').innerHTML = `Примерная стоимость: <span>${totalPrice}</span> ₽`;
+    document.getElementById('total-price').innerHTML = `Примерная стоимость: <span>${finalPrice}</span> ₽`;
     
-    // Отображаем разбивку цены
     const breakdownHTML = breakdown.map(item => `<div>${item}</div>`).join('');
     document.getElementById('price-breakdown').innerHTML = breakdownHTML;
     
-    // Добавляем текст о договорной цене
+    // Код для кнопки "Заказать" и текста (без изменений)
+    const existingNegotiateText = document.querySelector('.negotiate-text');
+    if (existingNegotiateText) existingNegotiateText.remove();
+    
+    const existingOrderButton = document.querySelector('.order-button');
+    if (existingOrderButton) existingOrderButton.remove();
+
     const negotiateText = document.createElement('div');
     negotiateText.className = 'negotiate-text';
     negotiateText.innerHTML = 'Не нравится цена? Давай договоримся 😄';
-    
-    // Удаляем предыдущий negotiate-text, если есть
-    const existingNegotiateText = document.querySelector('.negotiate-text');
-    if (existingNegotiateText) {
-        existingNegotiateText.remove();
-    }
-    
-    // Добавляем элемент в конец блока результатов
     resultElement.appendChild(negotiateText);
-    
-    // --- ДОБАВЛЯЕМ КНОПКУ "ЗАКАЗАТЬ" ---
-    // Удаляем предыдущую кнопку, если есть
-    const existingOrderButton = document.querySelector('.order-button');
-    if (existingOrderButton) {
-        existingOrderButton.remove();
-    }
     
     const orderButton = document.createElement('a');
     orderButton.href = 'https://donatty.com/gamelxrd';
     orderButton.target = '_blank';
-    orderButton.className = 'order-button negotiate-text'; // чтобы исчезала вместе с negotiate-text
+    orderButton.className = 'order-button negotiate-text';
     orderButton.textContent = 'ЗАКАЗАТЬ';
-    // Добавляем кнопку после negotiateText
     resultElement.appendChild(orderButton);
 
-    // Добавляем анимацию появления с задержкой
     setTimeout(() => {
         negotiateText.classList.add('visible');
         orderButton.classList.add('visible');
-    }, 500);
-
-    // Отображаем анимацию появления с задержкой
-    setTimeout(() => {
-        negotiateText.classList.add('visible');
     }, 500);
 }
 
@@ -857,88 +819,90 @@ function clearGameDetails() {
 
 // Обновляем обработчик события для поля поиска
 document.addEventListener('DOMContentLoaded', function() {
+    // --- Получаем все нужные элементы со страницы ---
     const searchInput = document.getElementById('game-search');
     const gameLengthInput = document.getElementById('game-length');
-    // --- НОВАЯ СТРОКА: Находим поле с ценой игры ---
     const gamePriceInput = document.getElementById('game-price'); 
     const resetTagsButton = document.getElementById('reset-tags');
     const toggleTagsButton = document.getElementById('toggle-tags');
+    const resultsContainer = document.getElementById('search-results');
+    const loaderContainer = document.getElementById('loader-container');
 
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            if (this.value.trim() === '') {
-                resetAllFields();
-            }
-        });
-    }
-    
-    // Добавляем обработчик для кнопки сброса тегов
+    // --- Назначаем все обработчики событий ---
+
+    // Кнопки для тегов
     if (resetTagsButton) {
         resetTagsButton.addEventListener('click', resetTags);
     }
-    
-    // Добавляем обработчик для кнопки переключения тегов
     if (toggleTagsButton) {
         toggleTagsButton.addEventListener('click', toggleAllTags);
     }
     
-    // Обработчик для поля длительности (он у тебя уже был)
+    // Пересчет цены при изменении ДЛИТЕЛЬНОСТИ
     if (gameLengthInput) {
         gameLengthInput.addEventListener('input', function() {
-            // Если результат уже отображается, пересчитываем стоимость
             if (lastSelectedGame && document.getElementById('result').classList.contains('visible')) {
                 calculatePrice();
             }
         });
     }
 
-    // --- НОВЫЙ БЛОК: Добавляем обработчик для поля с ценой игры ---
+    // Пересчет цены при изменении ЦЕНЫ ИГРЫ (ручной ввод)
     if (gamePriceInput) {
         gamePriceInput.addEventListener('input', function() {
-            // Пересчитываем стоимость, только если результат уже виден
             if (document.getElementById('result').classList.contains('visible')) {
                 calculatePrice();
             }
         });
     }
-    // --- КОНЕЦ НОВОГО БЛОКА ---
     
+    // Логика для поля поиска
     if (searchInput) {
+        // Поиск с задержкой при вводе
         searchInput.addEventListener('input', debounce(async function(e) {
             const query = e.target.value.trim();
-            
-            // Скрываем результат расчета при вводе нового названия игры
             document.getElementById('result').classList.remove('visible');
-            
-            // Очищаем детали игры при новом поиске
             clearGameDetails();
             
             if (query.length < 3) {
-                document.getElementById('search-results').style.display = 'none';
-                document.getElementById('loader-container').style.display = 'none';
+                resultsContainer.style.display = 'none';
+                loaderContainer.style.display = 'none';
+                // Показываем недавние игры, если поле очистили
+                showRecentGamesDropdown();
                 return;
             }
             
-            // Показываем индикатор загрузки
-            document.getElementById('search-results').style.display = 'none';
-            document.getElementById('loader-container').style.display = 'block';
+            resultsContainer.style.display = 'none';
+            loaderContainer.style.display = 'block';
             
             const games = await searchGames(query);
             
-            // Скрываем индикатор загрузки
-            document.getElementById('loader-container').style.display = 'none';
-            
+            loaderContainer.style.display = 'none';
             displaySearchResults(games);
-        }, 200));
-        
-        // Скрываем результаты при клике вне поля поиска
-        document.addEventListener('click', function(e) {
-            if (e.target !== searchInput && !e.target.closest('.search-results')) {
-                document.getElementById('search-results').style.display = 'none';
-                document.getElementById('search-results').classList.remove('visible');
+        }, 300));
+
+        // Показ недавних игр при фокусе, если поле пустое
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim() === '') {
+                showRecentGamesDropdown();
+            }
+        });
+
+        // Сброс всего, если поле поиска полностью очистили
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                resetAllFields();
             }
         });
     }
+
+    // Скрытие результатов при клике вне поля
+    document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && !e.target.closest('.search-results')) {
+            resultsContainer.style.display = 'none';
+            resultsContainer.classList.remove('visible');
+        }
+    });
 });
 
 // Функция для определения, является ли устройство мобильным
@@ -1072,26 +1036,3 @@ function showRecentGamesDropdown() {
         resultsContainer.classList.add('visible');
     }, 10);
 }
-
-// Показываем последние игры при фокусе на поле поиска, если оно пустое
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('game-search');
-    if (searchInput) {
-        searchInput.addEventListener('focus', function() {
-            if (this.value.trim() === '') {
-                showRecentGamesDropdown();
-            }
-        });
-        searchInput.addEventListener('input', function() {
-            if (this.value.trim() === '') {
-                showRecentGamesDropdown();
-            }
-        });
-        // Скрываем выпадающий список при потере фокуса
-        searchInput.addEventListener('blur', function() {
-            setTimeout(() => {
-                document.getElementById('search-results').style.display = 'none';
-            }, 200);
-        });
-    }
-});
