@@ -292,50 +292,18 @@ async function selectGame(game) {
         const gamePriceInput = document.getElementById('game-price');
         gamePriceInput.value = 0;
 
-        // --- "СУПЕР ПЛАН Б": УМНАЯ СИСТЕМА ПОЛУЧЕНИЯ ЦЕНЫ ---
-        let steamAppId = null;
-        if (gameDetails.stores) {
-            const steamStore = gameDetails.stores.find(store => store.store && store.store.slug === 'steam');
-            if (steamStore && steamStore.url) {
-                const match = steamStore.url.match(/app\/(\d+)/);
-                if (match) {
-                    steamAppId = match[1];
-                }
-            }
-        }
-        
-        let proxyUrl = 'https://gamelxrd.netlify.app/.netlify/functions/rawg?';
-        let queryParams = '';
-
-        // План А: если есть Steam App ID, используем его (самый точный метод)
-        if (steamAppId) {
-            console.log(`План А: Найден Steam App ID (${steamAppId}). Ищем по нему.`);
-            queryParams = `steamAppId=${steamAppId}`;
-        } 
-        // Супер План Б: если ID нет, используем название + год релиза
-        else {
-            let searchName = game.name;
-            // Уточняем название игры, добавляя год релиза
-            if (gameDetails.released) {
-                const releaseYear = gameDetails.released.substring(0, 4);
-                // Добавляем год, только если его еще нет в названии
-                if (!searchName.includes(releaseYear)) {
-                    searchName = `${searchName} (${releaseYear})`;
-                }
-            }
-            console.log(`План Б: Steam App ID не найден. Ищем по уточненному названию "${searchName}".`);
-            queryParams = `gameName=${encodeURIComponent(searchName)}`;
-        }
-        
+        // --- Упрощенная логика: Просто отправляем название, сервер сделает остальное ---
         try {
-            const response = await fetch(proxyUrl + queryParams);
+            // Используем game.name, так как оно обычно точнее для поиска, чем то, что ввел пользователь
+            const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?gameName=${encodeURIComponent(game.name)}`;
+            const response = await fetch(proxyUrl);
             const data = await response.json();
             
             if (data.price > 0) {
-                console.log(`Успех! Найдена и сконвертирована цена: ${data.price} ₽`);
+                console.log(`Успех! Найдена цена: ${data.price} ₽`);
                 gamePriceInput.value = data.price;
             } else {
-                console.log('Не удалось найти цену через ITAD, либо игра бесплатна.');
+                console.log('Не удалось найти цену, либо игра бесплатна.');
             }
         } catch (error) {
             console.error('Ошибка при получении цены:', error);
