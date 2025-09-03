@@ -51,16 +51,15 @@ exports.handler = async (event) => {
 
       // --- Этап 2: Используем найденный App ID для поиска в ITAD (самый надежный способ) ---
       console.log(`[Функция]: Шаг 2.1 - Ищу данные для app/${steamAppId}`);
-      const itadId = `steam/app/${steamAppId}`;
-      const encodedItadId = encodeURIComponent(itadId);
-      const overviewResponse = await fetch(`https://api.isthereanydeal.com/v01/game/overview/?key=${ITAD_API_KEY}&ids=${encodedItadId}`);
-      const overviewData = await overviewResponse.json();
+      const gameIdForItad = `app/${steamAppId}`;
+      const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&shop=steam&game_id=${encodeURIComponent(gameIdForItad)}`);
+      const plainData = await plainResponse.json();
 
       // Проверяем, что ответ содержит данные и "plain"
-      if (!overviewData.data || !overviewData.data[itadId] || !overviewData.data[itadId].plain) {
+      if (!plainData.data || !plainData.data.plain) {
           return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
       }
-      const gamePlain = overviewData.data[itadId].plain;
+      const gamePlain = plainData.data.plain;
       console.log(`[Функция]: УСПЕХ! : ${gamePlain}`);
 
       // --- Этап 3: Получаем цену в KZT и конвертируем в RUB ---
