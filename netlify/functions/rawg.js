@@ -1,5 +1,3 @@
-// Файл: /netlify/functions/rawg.js
-
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // --- API ключи и разрешенный домен ---
