@@ -54,7 +54,8 @@ exports.handler = async (event) => {
       // --- Этап 2: Используем найденный App ID для поиска в ITAD (самый надежный способ) ---
       console.log(`[Функция]: Шаг 2.1 - Ищу данные для app/${steamAppId}`);
       const itadId = `steam/app/${steamAppId}`;
-      const overviewResponse = await fetch(`https://api.isthereanydeal.com/v01/game/overview/?key=${ITAD_API_KEY}&ids=${itadId}`);
+      const encodedItadId = encodeURIComponent(itadId);
+      const overviewResponse = await fetch(`https://api.isthereanydeal.com/v01/game/overview/?key=${ITAD_API_KEY}&ids=${encodedItadId}`);
       const overviewData = await overviewResponse.json();
 
       // Проверяем, что ответ содержит данные и "plain"
