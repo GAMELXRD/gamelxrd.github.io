@@ -299,6 +299,7 @@ async function selectGame(game) {
             const response = await fetch(proxyUrl);
             const data = await response.json();
             
+            console.log(data)
             if (data.price > 0) {
                 console.log(`Успех! Найдена цена: ${data.price} ₽`);
                 gamePriceInput.value = data.price;
