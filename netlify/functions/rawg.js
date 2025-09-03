@@ -52,15 +52,17 @@ exports.handler = async (event) => {
       console.log(`[Функция]: УСПЕХ! Найден Steam App ID: ${steamAppId}`);
 
       // --- Этап 2: Используем найденный App ID для поиска в ITAD (самый надежный способ) ---
-      console.log(`[Функция]: Шаг 2.1 - Ищу "plain" для app/${steamAppId}`);
-      const plainResponse = await fetch(`https://api.isthereanydeal.com/v02/game/plain/?key=${ITAD_API_KEY}&shop=steam&game_id=app%2F${steamAppId}`);
-      const plainData = await plainResponse.json();
-      if (!plainData.data || !plainData.data.plain) {
-        console.log(`[Функция]: ПРОВАЛ! ITAD не нашел "plain". Возвращаю цену 0.`);
-        return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
+      console.log(`[Функция]: Шаг 2.1 - Ищу данные для app/${steamAppId}`);
+      const itadId = `steam/app/${steamAppId}`;
+      const overviewResponse = await fetch(`https://api.isthereanydeal.com/v01/game/overview/?key=${ITAD_API_KEY}&ids=${itadId}`);
+      const overviewData = await overviewResponse.json();
+
+      // Проверяем, что ответ содержит данные и "plain"
+      if (!overviewData.data || !overviewData.data[itadId] || !overviewData.data[itadId].plain) {
+          return { statusCode: 200, headers, body: JSON.stringify({ price: 0 }) };
       }
-      const gamePlain = plainData.data.plain;
-      console.log(`[Функция]: УСПЕХ! Найден "plain": ${gamePlain}`);
+      const gamePlain = overviewData.data[itadId].plain;
+      console.log(`[Функция]: УСПЕХ! : ${gamePlain}`);
 
       // --- Этап 3: Получаем цену в KZT и конвертируем в RUB ---
       console.log(`[Функция]: Шаг 3.1 - Запрашиваю цены для "${gamePlain}" в регионе KZ.`);
