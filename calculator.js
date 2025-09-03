@@ -330,23 +330,38 @@ async function selectGame(game) {
         console.log('Данные игры RAWG:', gameDetails);
         
         const gamePriceInput = document.getElementById('game-price');
-        gamePriceInput.value = 0; // Сбрасываем поле цены перед запросом
+        gamePriceInput.value = 0;
 
-        // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Запрашиваем цену через ITAD по названию игры ---
-        try {
-            const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?gameName=${encodeURIComponent(game.name)}`;
-            const response = await fetch(proxyUrl);
-            const data = await response.json();
-            
-            if (data.price > 0) {
-                console.log(`Найдена цена через ITAD: ${data.price}`);
-                // Округляем цену до целого числа на всякий случай
-                gamePriceInput.value = Math.round(data.price);
-            } else {
-                console.log('Не удалось найти цену через ITAD, либо игра бесплатна.');
+        // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Ищем Steam App ID и передаем его ---
+        let steamAppId = null;
+        if (gameDetails.stores) {
+            const steamStore = gameDetails.stores.find(store => store.store && store.store.slug === 'steam');
+            // В URL от RAWG содержится App ID
+            if (steamStore && steamStore.url) {
+                const match = steamStore.url.match(/app\/(\d+)/);
+                if (match) {
+                    steamAppId = match[1];
+                }
             }
-        } catch (error) {
-            console.error('Ошибка при получении цены из ITAD:', error);
+        }
+
+        if (steamAppId) {
+            try {
+                const proxyUrl = `https://gamelxrd.netlify.app/.netlify/functions/rawg?steamAppId=${steamAppId}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (data.price > 0) {
+                    console.log(`Найдена и сконвертирована цена: ${data.price} ₽`);
+                    gamePriceInput.value = data.price;
+                } else {
+                    console.log('Не удалось найти цену через ITAD, либо игра бесплатна.');
+                }
+            } catch (error) {
+                console.error('Ошибка при получении цены:', error);
+            }
+        } else {
+            console.log('Steam App ID для этой игры не найден.');
         }
         
         // Устанавливаем обложку игры и показываем контейнер
