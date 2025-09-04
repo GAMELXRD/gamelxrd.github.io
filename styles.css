@@ -792,6 +792,11 @@ select, input {
     line-height: 1.4;
     text-align: justify;
     margin: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 }
 
 .length-container {
