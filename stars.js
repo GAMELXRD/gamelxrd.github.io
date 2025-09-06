@@ -2,7 +2,7 @@ import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
 import { CSS2DRenderer, CSS2DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS2DRenderer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const showNicknames = Math.random() < 0.55;
+    const showNicknames = Math.random() < 0.10;
 
     const spawnRange = 300;
     const spawnDepth = -500;
