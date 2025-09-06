@@ -1,303 +1,204 @@
+import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+import { CSS2DRenderer, CSS2DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS2DRenderer.js';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Переменные для управления отображением
-    const showNicknamesOnly = Math.random() < 0.25; // 25% шанс отображения только никнеймов
-    let showStars = !showNicknamesOnly; // Звезды отображаются, только если не выпал шанс на никнеймы
-    let showNicknames = showNicknamesOnly; // Никнеймы отображаются, только если выпал шанс
-    const starSizeMultiplier = 3.0; // Множитель размера звезд (1.0 - стандартный размер)
-    
-    const starContainer = document.createElement('div');
-    starContainer.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-        overflow: hidden;
-        perspective: 1000px;
-    `;
-    document.body.appendChild(starContainer);
+    const showNicknames = Math.random() < 0.55;
 
-    // Определяем, является ли устройство мобильным
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const spawnRange = 300;
+    const spawnDepth = -500;
+    const fadeInSpeed = 1.5;
 
-    // Список случайных никнеймов для звезд
     const nicknames = [
         'Хагрид', 'miitchull', 'DEDFEAR', 'Evil4el', '⎛⎝>⏝⏝<⎛⎝', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao', 'dizzzyboy_', 'сиська папича', 'mrsody', 'Квили', 'alex_exz'
     ];
 
-    // Специальные цвета для определенных никнеймов
     const specialColors = {
-        'Хагрид': 'rgb(255, 166, 0)',
-        'DEDFEAR': 'rgba(255, 224, 86, 0.85)', 
-        'Evil4el': 'rgba(143, 119, 252, 0.85)',
-        '⎛⎝>⏝⏝<⎛⎝': 'rgba(202, 122, 255, 0.85)',
-        'dizzzyboy_': 'rgba(245, 84, 35, 0.85)',
-        'yournihao': 'rgba(246, 123, 250, 0.85)',
+        'Хагрид': new THREE.Color('rgb(255, 166, 0)'),
+        'DEDFEAR': new THREE.Color('rgba(255, 224, 86, 0.85)'),
+        'Evil4el': new THREE.Color('rgba(143, 119, 252, 0.85)'),
+        '⎛⎝>⏝⏝<⎛⎝': new THREE.Color('rgba(202, 122, 255, 0.85)'),
+        'dizzzyboy_': new THREE.Color('rgba(245, 84, 35, 0.85)'),
+        'yournihao': new THREE.Color('rgba(246, 123, 250, 0.85)'),
     };
+    const defaultColor = new THREE.Color('rgba(255, 255, 255, 0.95)');
 
-    // Отслеживаем активные никнеймы на экране
-    const activeNicknames = new Set();
+    let scene, camera, renderer, labelRenderer, stars;
+    const starParticles = [];
 
-    class Star {
-        constructor() {
-            // Создаем контейнер для звезды и никнейма
-            this.container = document.createElement('div');
-            this.element = document.createElement('div');
-            this.nickname = document.createElement('div');
-            
-            // Добавляем классы для элементов (для управления видимостью)
-            this.element.classList.add('star-element');
-            this.nickname.classList.add('star-nickname');
-            
-            // Выбираем случайный никнейм, который еще не используется
-            this.nickText = getAvailableNickname();
-            
-            // Уменьшаем размер звезд на мобильных устройствах
-            this.size = (Math.random() * (isMobile ? 0.15 : 0.2) + (isMobile ? 0.05 : 0.1)) * starSizeMultiplier;
-            
-            // Распределяем звезды по всему экрану
-            const margin = isMobile ? 20 : 50;
-            this.x = margin + Math.random() * (window.innerWidth - margin * 2);
-            this.y = margin + Math.random() * (window.innerHeight - margin * 2);
-            
-            // Начинаем с разных Z-координат для более равномерного распределения
-            this.z = -500 + Math.random() * 300;
-            
-            // Движение только вперед с небольшим разбросом
-            // Уменьшаем разброс на мобильных устройствах
-            const spread = isMobile ? 0.1 : 0.15;
-            this.vx = (Math.random() - 0.5) * spread;
-            this.vy = (Math.random() - 0.5) * spread;
-            // Уменьшаем скорость на мобильных устройствах
-            // Скорость теперь в единицах в секунду, а не в кадр
-            this.vz = isMobile ? 90 : 120;
-            this.vx *= 60; // Умножаем на 60, чтобы перевести в единицы в секунду
-            this.vy *= 60; // Умножаем на 60, чтобы перевести в единицы в секунду
-            
-            // Стили для контейнера
-            this.container.style.cssText = `
-                position: absolute;
-                transform: translate3d(${this.x}px, ${this.y}px, ${this.z}px);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                opacity: 0;
-                transition: opacity 0.8s ease-in-out;
-            `;
-            
-            // Проверяем, есть ли специальный цвет для данного никнейма
-            const nicknameColor = specialColors[this.nickText] || 'rgba(255, 255, 255, 0.95)';
-            
-            // Получаем цвет для свечения (без альфа-канала)
-            // Если это RGB цвет, используем его, иначе извлекаем RGB из RGBA
-            let glowColor;
-            if (nicknameColor.startsWith('rgb(')) {
-                glowColor = nicknameColor;
-            } else if (nicknameColor.startsWith('rgba(')) {
-                // Извлекаем RGB часть из RGBA
-                glowColor = 'rgb(' + nicknameColor.substring(5, nicknameColor.lastIndexOf(',')) + ')';
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.domElement.style.position = 'fixed';
+        renderer.domElement.style.top = 0;
+        renderer.domElement.style.left = 0;
+        renderer.domElement.style.zIndex = -1;
+        document.body.appendChild(renderer.domElement);
+        
+        if (showNicknames) {
+            labelRenderer = new CSS2DRenderer();
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.domElement.style.position = 'fixed';
+            labelRenderer.domElement.style.top = 0;
+            labelRenderer.domElement.style.left = 0;
+            labelRenderer.domElement.style.pointerEvents = 'none';
+            labelRenderer.domElement.style.zIndex = -1;
+            document.body.appendChild(labelRenderer.domElement);
+        }
+        
+        createStars();
+        window.addEventListener('resize', onWindowResize, false);
+        animate();
+    }
+
+    function createStars() {
+        const starGeometry = new THREE.BufferGeometry();
+        const positions = [];
+        const colors = [];
+        const sizes = [];
+
+        const starCount = showNicknames ? nicknames.length : 400;
+        const specialColorsArray = Object.values(specialColors);
+
+        for (let i = 0; i < starCount; i++) {
+            const x = (Math.random() - 0.5) * spawnRange;
+            const y = (Math.random() - 0.5) * spawnRange;
+            const z = Math.random() * spawnDepth;
+            positions.push(x, y, z);
+            sizes.push(Math.random() * 0.5 + 0.2);
+
+            let color;
+            if (showNicknames) {
+                const nickText = nicknames[i % nicknames.length];
+                color = specialColors[nickText] || defaultColor;
             } else {
-                // Если формат неизвестен, используем белый цвет
-                glowColor = 'rgb(255, 255, 255)';
-            }
-            
-            // Упрощаем стили для звезды
-            this.element.style.cssText = `
-                width: ${this.size}px;
-                height: ${this.size}px;
-                background: ${glowColor.replace('rgb', 'rgba').replace(')', ', 0.85)')};
-                border-radius: 50%;
-                ${isMobile ? '' : `box-shadow: 0 0 ${this.size * 5}px ${glowColor};`}
-                ${isMobile ? '' : `filter: blur(${this.size * 0.03}px);`}
-                display: ${showStars ? 'block' : 'none'};
-            `;
-            
-            // Стили для никнейма
-            this.nickname.style.cssText = `
-                color: ${nicknameColor};
-                font-size: ${isMobile ? '4px' : '5px'};
-                font-weight: 600;
-                margin-bottom: 3px;
-                white-space: nowrap;
-                text-shadow: 0 0 2px ${glowColor};
-                font-family: 'Montserrat', sans-serif;
-                display: ${showNicknames ? 'block' : 'none'};
-            `;
-            
-            // Устанавливаем текст никнейма
-            this.nickname.textContent = this.nickText;
-            
-            // Добавляем элементы в DOM
-            this.container.appendChild(this.nickname);
-            this.container.appendChild(this.element);
-            starContainer.appendChild(this.container);
-            
-            // Важно! Используем requestAnimationFrame вместо setTimeout для более плавной анимации
-            requestAnimationFrame(() => {
-                this.container.style.opacity = '1';
-            });
-        }
-
-        move(deltaTime) {
-            // Используем deltaTime для расчета перемещения
-            // deltaTime в секундах, поэтому умножаем скорость на deltaTime
-            this.x += this.vx * deltaTime;
-            this.y += this.vy * deltaTime;
-            this.z += this.vz * deltaTime;
-            
-            if (this.z > 1000) {
-                this.fadeOut();
-                return false;
-            }
-            
-            // Убираем scale из transform для лучшей производительности
-            this.container.style.transform = `translate3d(${this.x}px, ${this.y}px, ${this.z}px)`;
-            return true;
-        }
-
-        fadeOut() {
-            // Освобождаем никнейм для повторного использования
-            activeNicknames.delete(this.nickText);
-            
-            // Используем requestAnimationFrame для более плавного исчезновения
-            requestAnimationFrame(() => {
-                this.container.style.opacity = '0';
-                
-                // Удаляем элемент после завершения анимации
-                setTimeout(() => this.container.remove(), 400);
-            });
-        }
-    }
-
-    // Функция для получения доступного никнейма
-    function getAvailableNickname() {
-        // Создаем массив доступных никнеймов (тех, которые не используются)
-        const availableNicknames = nicknames.filter(nick => !activeNicknames.has(nick));
-        
-        // Если все никнеймы используются, возвращаем случайный из всего списка
-        if (availableNicknames.length === 0) {
-            return nicknames[Math.floor(Math.random() * nicknames.length)];
-        }
-        
-        // Выбираем случайный никнейм из доступных
-        const selectedNick = availableNicknames[Math.floor(Math.random() * availableNicknames.length)];
-        
-        // Добавляем его в список активных
-        activeNicknames.add(selectedNick);
-        
-        return selectedNick;
-    }
-
-    const stars = new Set();
-    // Устанавливаем максимальное количество звезд равным количеству никнеймов
-    // Но ограничиваем для мобильных устройств
-    const MAX_STARS = isMobile ? Math.min(15, nicknames.length) : nicknames.length;
-    let lastCreateTime = 0;
-
-    // Добавляем переменную для отслеживания прокрутки
-    let isScrolling = false;
-    let scrollTimeout;
-
-    // Обработчик прокрутки
-    window.addEventListener('scroll', () => {
-        isScrolling = true;
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 200);
-    });
-
-    function createStar() {
-        const now = Date.now();
-        // Уменьшаем интервал создания звезд для более равномерного появления
-        if (now - lastCreateTime < (isMobile ? 100 : 30)) return;
-        
-        if (stars.size < MAX_STARS) {
-            stars.add(new Star());
-            lastCreateTime = now;
-        }
-    }
-
-    // Переменные для расчета deltaTime
-    let lastTime = 0;
-
-    function animate(currentTime) {
-        // Расчет deltaTime в секундах
-        if (!lastTime) lastTime = currentTime;
-        const deltaTime = (currentTime - lastTime) / 1000; // Переводим в секунды
-        lastTime = currentTime;
-        
-        // Ограничиваем deltaTime, чтобы избежать больших скачков
-        // при переключении вкладок или низком FPS
-        const clampedDeltaTime = Math.min(deltaTime, 0.1);
-        
-        // Не создаем новые звезды во время прокрутки на мобильных устройствах
-        if (!(isMobile && isScrolling)) {
-            createStar();
-        }
-        
-        // Обновляем только каждый второй кадр на мобильных устройствах
-        if (!(isMobile && isScrolling)) {
-            stars.forEach(star => {
-                if (!star.move(clampedDeltaTime)) {
-                    stars.delete(star);
+                if (Math.random() < 0.15) {
+                    color = specialColorsArray[Math.floor(Math.random() * specialColorsArray.length)];
+                } else {
+                    color = defaultColor;
                 }
+            }
+            colors.push(color.r, color.g, color.b, 1.0);
+            
+            let nicknameLabel = null;
+            if (showNicknames) {
+                const nickText = nicknames[i % nicknames.length];
+                const nicknameDiv = document.createElement('div');
+                nicknameDiv.className = 'star-nickname';
+                nicknameDiv.textContent = nickText;
+                nicknameDiv.style.color = `rgb(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)})`;
+                nicknameDiv.style.textShadow = `0 0 5px ${nicknameDiv.style.color}`;
+                
+                nicknameLabel = new CSS2DObject(nicknameDiv);
+                nicknameLabel.position.set(x, y, z);
+                scene.add(nicknameLabel);
+            }
+
+            starParticles.push({
+                position: new THREE.Vector3(x, y, z),
+                velocity: new THREE.Vector3(0, 0, 25 + Math.random() * 25),
+                label: nicknameLabel,
+                opacity: 1.0
             });
         }
-        
-        requestAnimationFrame(animate);
-    }
 
-    // Создаем начальные звезды с более равномерным распределением по времени и пространству
-    // Ограничиваем количество начальных звезд количеством никнеймов
-    const initialStarCount = Math.min(isMobile ? 30 : 60, MAX_STARS);
-    
-    // Создаем начальные звезды с разными Z-координатами для равномерного распределения
-    for (let i = 0; i < initialStarCount; i++) {
-        // Создаем звезды сразу, но с разными начальными позициями
-        setTimeout(() => {
-            const star = new Star();
-            // Устанавливаем разные Z-координаты для начальных звезд
-            star.z = -500 + (i / initialStarCount) * 1500;
-            stars.add(star);
-        }, Math.random() * 500); // Небольшая случайная задержка для более естественного появления
-    }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 4));
+        starGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
 
-    // Запускаем анимацию с передачей текущего времени
-    requestAnimationFrame(animate);
-
-    // Останавливаем анимацию, когда вкладка неактивна
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            stars.forEach(star => {
-                // Освобождаем все никнеймы
-                activeNicknames.delete(star.nickText);
-                star.fadeOut();
-            });
-            stars.clear();
-            // Сбрасываем lastTime при возвращении на вкладку
-            lastTime = 0;
-        }
-    });
-
-    // Добавляем обработчик изменения ориентации для мобильных устройств
-    if (isMobile) {
-        window.addEventListener('orientationchange', () => {
-            // Даем время на перерисовку после изменения ориентации
-            setTimeout(() => {
-                // Удаляем звезды, которые могут оказаться за пределами экрана
-                stars.forEach(star => {
-                    if (star.x < 0 || star.x > window.innerWidth || 
-                        star.y < 0 || star.y > window.innerHeight) {
-                        // Освобождаем никнейм
-                        activeNicknames.delete(star.nickText);
-                        star.fadeOut();
-                        stars.delete(star);
-                    }
-                });
-            }, 100);
+        const starMaterial = new THREE.PointsMaterial({
+            vertexColors: true,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            map: !showNicknames ? createStarTexture() : null,
         });
+
+        if (showNicknames) {
+            starMaterial.visible = false;
+        }
+
+        stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
     }
+
+    function createStarTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 64, 64);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        if (showNicknames) {
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    }
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        const positions = stars.geometry.attributes.position.array;
+        const colors = stars.geometry.attributes.color.array;
+
+        for (let i = 0; i < starParticles.length; i++) {
+            const particle = starParticles[i];
+            
+            particle.position.z += particle.velocity.z * delta;
+            
+            if (particle.position.z > camera.position.z) {
+                particle.position.z = spawnDepth; 
+                particle.position.x = (Math.random() - 0.5) * spawnRange;
+                particle.position.y = (Math.random() - 0.5) * spawnRange;
+                particle.opacity = 0.0;
+            }
+
+            if (particle.opacity < 1.0) {
+                particle.opacity += fadeInSpeed * delta;
+                particle.opacity = Math.min(particle.opacity, 1.0);
+            }
+            
+            if (particle.label) {
+                particle.label.element.style.opacity = particle.opacity;
+                // --- ВОТ ИСПРАВЛЕНИЕ ---
+                // Возвращаем на место строку, которая обновляет 3D позицию никнейма
+                particle.label.position.copy(particle.position);
+            }
+
+            const posIndex = i * 3;
+            positions[posIndex] = particle.position.x;
+            positions[posIndex + 1] = particle.position.y;
+            positions[posIndex + 2] = particle.position.z;
+
+            const colorIndex = i * 4;
+            colors[colorIndex + 3] = particle.opacity;
+        }
+
+        stars.geometry.attributes.position.needsUpdate = true;
+        stars.geometry.attributes.color.needsUpdate = true;
+        
+        renderer.render(scene, camera);
+        
+        if (showNicknames) {
+            labelRenderer.render(scene, camera);
+        }
+    }
+
+    init();
 });
