@@ -60,7 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const colors = [];
         const sizes = [];
 
-        const starCount = showNicknames ? nicknames.length : 400;
+        // const starCount = showNicknames ? nicknames.length : 400;
+        const starCount = nicknames.length;
         const specialColorsArray = Object.values(specialColors);
 
         for (let i = 0; i < starCount; i++) {
