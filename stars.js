@@ -1,5 +1,4 @@
-import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
-import { CSS2DRenderer, CSS2DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS2DRenderer.js';
+const { CSS2DRenderer, CSS2DObject } = THREE;
 
 document.addEventListener('DOMContentLoaded', () => {
     const showNicknames = Math.random() < 0.10;
