@@ -57,14 +57,18 @@ function calculatePrice() {
     let finalPrice = servicePrice + gamePrice;
 
     // Округляем итоговую стоимость
-    finalPrice = Math.ceil(finalPrice / 10) * 10;
+    const roundedFinalPrice = Math.ceil(finalPrice / 10) * 10;
+    const roundedServicePrice = Math.ceil(servicePrice / 10) * 10;
 
     // --- Шаг 4: Отображение результата ---
-    breakdown.push(`<b>Итого: ${finalPrice} ₽</b>`);
+    breakdown.push(`<b>Итого: ${roundedFinalPrice} ₽</b>`);
     
     const resultElement = document.getElementById('result');
     resultElement.classList.add('visible');
-    document.getElementById('total-price').innerHTML = `Примерная стоимость: <span>${finalPrice}</span> ₽`;
+    document.getElementById('total-price').innerHTML = `
+        Примерная стоимость: <span>${roundedFinalPrice}</span> ₽
+        <div class="price-without-game">Без игры: ${roundedServicePrice} ₽</div>
+    `;
     
     const breakdownHTML = breakdown.map(item => `<div>${item}</div>`).join('');
     document.getElementById('price-breakdown').innerHTML = breakdownHTML;
