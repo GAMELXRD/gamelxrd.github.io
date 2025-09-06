@@ -1043,3 +1043,9 @@ input[readonly] {
 .horror-tag:hover {
     background-color: rgba(255, 0, 0, 0.3);
 }
+
+.price-without-game {
+  font-size: 0.8em;
+  color: #ccc;
+  margin-top: 5px;
+}
