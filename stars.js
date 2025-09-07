@@ -2,7 +2,7 @@
 const { CSS2DRenderer, CSS2DObject } = THREE;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const showNicknames = Math.random() < 0.55;
+    const showNicknames = Math.random() < 0.1;
 
     // --- НАСТРОЙКИ АНИМАЦИИ ---
     const spawnRange = 300;          // Ширина/высота области появления звёзд
