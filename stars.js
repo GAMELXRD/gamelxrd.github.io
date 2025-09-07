@@ -1,11 +1,17 @@
+// Используем глобальный объект THREE
 const { CSS2DRenderer, CSS2DObject } = THREE;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const showNicknames = Math.random() < 0.10;
+    const showNicknames = Math.random() < 0.55;
 
-    const spawnRange = 300;
-    const spawnDepth = -500;
-    const fadeInSpeed = 1.5;
+    // --- НАСТРОЙКИ АНИМАЦИИ ---
+    const spawnRange = 300;          // Ширина/высота области появления звёзд
+    const spawnDepth = -1000;        // Как далеко сзади появляются звёзды
+    const fadeInSpeed = 1.5;         // Скорость плавного появления (больше = быстрее)
+    const nicknameSizeFactor = 1250;  // Коэффициент размера никнеймов
+    const minSpeed = 50;             // Минимальная скорость полёта
+    const speedRandomness = 50;      // Добавочная случайная скорость (скорость = minSpeed + random(0, speedRandomness))
+    // -------------------------
 
     const nicknames = [
         'Хагрид', 'miitchull', 'DEDFEAR', 'Evil4el', '⎛⎝>⏝⏝<⎛⎝', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao', 'dizzzyboy_', 'сиська папича', 'mrsody', 'Квили', 'alex_exz'
@@ -27,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
+        camera.position.z = 0;
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -59,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const colors = [];
         const sizes = [];
 
-        // const starCount = showNicknames ? nicknames.length : 400;
         const starCount = nicknames.length;
         const specialColorsArray = Object.values(specialColors);
 
@@ -72,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let color;
             if (showNicknames) {
-                const nickText = nicknames[i % nicknames.length];
+                const nickText = nicknames[i];
                 color = specialColors[nickText] || defaultColor;
             } else {
                 if (Math.random() < 0.15) {
@@ -85,12 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let nicknameLabel = null;
             if (showNicknames) {
-                const nickText = nicknames[i % nicknames.length];
+                const nickText = nicknames[i];
                 const nicknameDiv = document.createElement('div');
                 nicknameDiv.className = 'star-nickname';
                 nicknameDiv.textContent = nickText;
                 nicknameDiv.style.color = `rgb(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)})`;
                 nicknameDiv.style.textShadow = `0 0 5px ${nicknameDiv.style.color}`;
+                nicknameDiv.style.fontSize = '1px';
                 
                 nicknameLabel = new CSS2DObject(nicknameDiv);
                 nicknameLabel.position.set(x, y, z);
@@ -99,7 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             starParticles.push({
                 position: new THREE.Vector3(x, y, z),
-                velocity: new THREE.Vector3(0, 0, 25 + Math.random() * 25),
+                // --- ИЗМЕНЕНИЕ: Используем новые константы для скорости ---
+                velocity: new THREE.Vector3(0, 0, minSpeed + Math.random() * speedRandomness),
                 label: nicknameLabel,
                 opacity: 1.0
             });
@@ -162,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             particle.position.z += particle.velocity.z * delta;
             
-            if (particle.position.z > camera.position.z) {
+            if (particle.position.z > 0) {
                 particle.position.z = spawnDepth; 
                 particle.position.x = (Math.random() - 0.5) * spawnRange;
                 particle.position.y = (Math.random() - 0.5) * spawnRange;
@@ -175,10 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (particle.label) {
-                particle.label.element.style.opacity = particle.opacity;
-                // --- ВОТ ИСПРАВЛЕНИЕ ---
-                // Возвращаем на место строку, которая обновляет 3D позицию никнейма
                 particle.label.position.copy(particle.position);
+
+                const fontSize = nicknameSizeFactor / -particle.position.z;
+                particle.label.element.style.fontSize = `${fontSize}px`;
+                
+                particle.label.element.style.opacity = particle.opacity;
             }
 
             const posIndex = i * 3;
