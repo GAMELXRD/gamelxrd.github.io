@@ -1057,3 +1057,145 @@ input[readonly] {
   color: #ccc;
   margin-top: 5px;
 }
+
+/* IMBA стили */
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.page-header h1 {
+    color: var(--color-text-light);
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    margin-bottom: 5px;
+}
+
+.page-header p {
+    color: var(--color-text-light-secondary);
+    font-size: 1rem;
+}
+
+.imba-table-container p {
+    color: var(--color-text-light-secondary);
+    font-size: 1rem;
+    text-align: center;
+    font-weight: 700;
+    color: #f39c12;
+}
+
+/* Новый стиль для единого контейнера таблицы */
+.imba-table-container {
+    background: var(--color-background-dark);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 15px 20px; /* Внутренние отступы */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Стили для самой таблицы */
+.imba-table {
+    width: 100%;
+    border-collapse: collapse; /* Убирает двойные рамки и лишние отступы */
+}
+
+/* Стили для ячеек таблицы */
+.imba-table td {
+    padding: 8px 5px; /* Вертикальные отступы для разделения строк */
+    color: var(--color-text-light-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    vertical-align: top; /* Выравнивание по верху, если описание будет многострочным */
+}
+
+/* Добавляем тонкий разделитель между строками, кроме последней */
+.imba-table tr:not(:last-child) td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Стили для первых двух колонок: делаем их узкими и выравниваем */
+.imba-table td:nth-child(1),
+.imba-table td:nth-child(2),
+.imba-table td:nth-child(3) {
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 15px;
+}
+
+/* Стили для тега и цены (остаются такими же, как были) */
+.event-tag {
+    color: #f39c12;
+    font-weight: 700;
+}
+
+.event-cost {
+    color: #9b59b6;
+    font-weight: 600;
+    background-color: rgba(155, 89, 182, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.event-cooldown {
+    color: #85c1e9; /* Светло-голубой цвет для кулдаунов */
+    font-weight: 600;
+}
+
+/* --- Адаптивность для таблицы IMBA на смартфонах --- */
+
+@media (max-width: 540px) {
+    /* Превращаем каждую строку в гибкий контейнер */
+    .imba-table tr {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0;
+        /* Сепаратор теперь ТОЛЬКО здесь, на строке */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Убираем рамку у последней строки */
+    .imba-table tr:last-child {
+        border-bottom: none;
+    }
+    
+    /* ИСПРАВЛЕНИЕ: Прямо указываем, что у ячеек на мобильных НЕ должно быть своей рамки */
+    .imba-table tr:not(:last-child) td {
+        border-bottom: none;
+    }
+
+    /* Сбрасываем стили ячеек и уменьшаем шрифт */
+    .imba-table td {
+        padding: 4px 5px;
+        width: auto !important;
+        line-height: 1.4;
+        font-size: 0.9rem; /* Уменьшаем общий шрифт в таблице */
+    }
+
+    /* Первая колонка (!событие) */
+    .imba-table td:nth-child(1) {
+        flex-grow: 1;
+        padding-right: 10px;
+        order: 1;
+    }
+
+    /* Вторая колонка (цена) */
+    .imba-table td:nth-child(2) {
+        flex-shrink: 0;
+        text-align: right;
+        order: 2;
+    }
+
+    /* Третья колонка (кулдаун) */
+    .imba-table td:nth-child(3) {
+        order: 3; /* Порядок 3 */
+    }
+
+    /* Четвертая колонка (описание) */
+    .imba-table td:nth-child(4) {
+        order: 4; /* Порядок 4 */
+        flex-basis: 100%; /* Тоже переносится */
+        color: var(--color-text-light);
+    }
+}

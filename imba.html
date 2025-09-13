@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMBA</title>
+    <link rel="shortcut icon" href="logo.png" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 700px;">
+        <!-- Заголовок страницы -->
+        <div class="page-header">
+            <h1>IMBA</h1>
+            <p>Interactive Minecraft Birthday Adventure</p>
+        </div>
+        
+        <div class="links">
+            <!-- Бесплатные события -->
+            <div class="imba-table-container">
+                <p class="table-title" style="margin-bottom: 5px;">Бесплатные события (кд общий)</p>
+                <table class="imba-table">
+                    <tbody>
+                        <tr>
+                            <td><span class="event-tag">!хил</span></td>
+                            <td></td> <!-- Пустая ячейка цены -->
+                            <td><span class="event-cooldown">30 сек</span></td>
+                            <td>Похилить на пару сердец</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!еда</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">45 сек</span></td>
+                            <td>Дать рандомный хавчик 🥩</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!дроп</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">1 мин</span></td>
+                            <td>Выбить предмет из руки</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!поц</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">1 мин</span></td>
+                            <td>Стать мелким засранцем с 5 ❤️</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!ап</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">1 мин</span></td>
+                            <td>Подкинуть вверх на пару блоков</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!снег</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">2 мин</span></td>
+                            <td>Запихнуть в сугроб ❄️</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!срать</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Опустошить желудок</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!торт</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Поставить тортик 🎂</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!тп</span></td>
+                            <td></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Небольшой телепорт (радиус 25 блоков)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Платные события -->
+            <div class="imba-table-container">
+                <p class="table-title" style="margin-bottom: 5px;">Платные события</p>
+                <table class="imba-table">
+                    <tbody>
+                        <tr>
+                            <td><span class="event-tag">!зомби</span></td>
+                            <td><span class="event-cost">5 Токсов</span></td>
+                            <td><span class="event-cooldown"></span></td>
+                            <td>Заспавнить зомбаря 🧟</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!крысы</span></td>
+                            <td><span class="event-cost">10 Токсов</span></td>
+                            <td><span class="event-cooldown">1 мин</span></td>
+                            <td>Чертовы чешуйницы</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!ведьма</span></td>
+                            <td><span class="event-cost">15 Токсов</span></td>
+                            <td><span class="event-cooldown"></span></td>
+                            <td>Заспавнить ведьму</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!пес</span></td>
+                            <td><span class="event-cost">25 Токсов</span></td>
+                            <td><span class="event-cooldown">1 мин</span></td>
+                            <td>Прирученная собака 🐕</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!гном</span></td>
+                            <td><span class="event-cost">45 Токсов</span></td>
+                            <td><span class="event-cooldown">5 мин</span></td>
+                            <td>Уменьшить стримера на 1 мин.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!крипер</span></td>
+                            <td><span class="event-cost">50 Токсов</span></td>
+                            <td><span class="event-cooldown"></span></td>
+                            <td>Заспавнить крипера</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!флип</span></td>
+                            <td><span class="event-cost">50 Токсов</span></td>
+                            <td><span class="event-cooldown">5 мин</span></td>
+                            <td>Перевернуть экран на 30 сек.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!ифриты</span></td>
+                            <td><span class="event-cost">70 Токсов</span></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Три адских огненных урода 🔥</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!орда</span></td>
+                            <td><span class="event-cost">100 Токсов</span></td>
+                            <td><span class="event-cooldown">5 мин</span></td>
+                            <td>Заспавнить орду зомби 🧟🧟🧟</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!яма</span></td>
+                            <td><span class="event-cost">100 Токсов</span></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Вырыть яму под стримером</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!гроб</span></td>
+                            <td><span class="event-cost">125 Токсов</span></td>
+                            <td><span class="event-cooldown">10 мин</span></td>
+                            <td>Похоронить стримера</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!куда</span></td>
+                            <td><span class="event-cost">200 Токсов</span></td>
+                            <td><span class="event-cooldown">3 мин</span></td>
+                            <td>Телепорт в рандом коорды 🌌</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!хардкор</span></td>
+                            <td><span class="event-cost">300 Токсов</span></td>
+                            <td><span class="event-cooldown">15 мин</span></td>
+                            <td>Отключить реген от еды</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!изи</span></td>
+                            <td><span class="event-cost">300 Токсов</span></td>
+                            <td><span class="event-cooldown">15 мин</span></td>
+                            <td>Вернуть реген от еды</td>
+                        </tr>
+                        <tr>
+                            <td><span class="event-tag">!босс</span></td>
+                            <td><span class="event-cost">350 Токсов</span></td>
+                            <td><span class="event-cooldown">5 мин</span></td>
+                            <td>Стать Боссом этого стрима</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="event-tag">!лох</span></td>
+                            <td><span class="event-cost">1000 Токсов</span></td>
+                            <td><span class="event-cooldown"></span></td>
+                            <td>Просто убить. Инстакилл</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Футер, как на главной странице -->
+        <div class="footer">
+            <p>Сделано с 💖 <span style="font-weight: 800;">gamelxrd</span></p>
+            <p style="padding-top: 3px;">13.09.2025</p>
+        </div>
+    </div>
+
+    <!-- Подключаем фон со звёздами -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+    <script src="stars.js"></script>
+</body>
+</html>
