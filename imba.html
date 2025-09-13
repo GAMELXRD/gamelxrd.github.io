@@ -200,5 +200,31 @@
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
     <script src="stars.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allEventTags = document.querySelectorAll('.event-tag');
+
+            allEventTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    const textToCopy = tag.textContent;
+
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // --- Успех! ---
+                        // Добавляем класс для анимации подсветки
+                        tag.classList.add('highlight');
+
+                        // Через 1 секунду убираем класс, чтобы анимация могла сработать снова
+                        setTimeout(() => {
+                            tag.classList.remove('highlight');
+                        }, 1000);
+
+                    }).catch(err => {
+                        console.error('Не удалось скопировать текст: ', err);
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
