@@ -1058,6 +1058,8 @@ input[readonly] {
   margin-top: 5px;
 }
 
+
+
 /* IMBA стили */
 
 .page-header {
@@ -1106,12 +1108,16 @@ input[readonly] {
     color: var(--color-text-light-secondary);
     font-size: 1rem;
     line-height: 1.5;
-    vertical-align: top; /* Выравнивание по верху, если описание будет многострочным */
+    vertical-align: middle; /* Выравнивание по верху, если описание будет многострочным */
 }
 
 /* Добавляем тонкий разделитель между строками, кроме последней */
 .imba-table tr:not(:last-child) td {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.imba-table td:last-child {
+    font-size: 0.9rem;
 }
 
 /* Стили для первых двух колонок: делаем их узкими и выравниваем */
