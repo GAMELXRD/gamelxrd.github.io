@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------
 
     const nicknames = [
-        'Хагрид', 'miitchull', 'DEDFEAR', 'Evil4el', '⎛⎝>⏝⏝<⎛⎝', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao', 'dizzzyboy_', 'сиська папича', 'mrsody', 'Квили', 'alex_exz', '13hellsangel', 'kinder82'
+        'Хагрид', 'miitchull', 'DEDFEAR', 'Evil4el', '⎛⎝>⏝⏝<⎛⎝', 'capJ', 'zaxerisimus', 'AlexanderGo77', 'RastaOwl', 'showsalmon', 'sofkabrovka', 'HallLeon', 'sanek_ludik', 'meowgreyy', 'shinobee_4sv', 'mercurrry', 'BE7HA', 'Inngvarr', 'vrednaya_zhopa', 'Глянец', 'ESC', 'zaruinili', 'PiKaq7', 'crystalsoncher', 'ELF0V', 'Dzeem', 'InCrit', 'Ferazelz', 'Toopenya', 'HUBIBICH', 'Gaucheboy', 'solo_mogby_bit', 'lisadess', 'wercop83', 'wladizlaw', 'eriooook', 'flur0x', 'Krizzz', 'gogomorgort', 'Lrost', 'v4nec', 'j0anans', 'Da__Co', 'showsalmon', 'laketoki', 'Кич', 'Basila', 'hpuv', 'Anonimcat', 'yournihao', 'dizzzyboy_', 'сиська папича', 'mrsody', 'Квили', 'alex_exz', '13hellsangel', 'kinder82', 'Duck_in_slippers', '73KAMIKADZE73', 'anastasia'
     ];
 
     const specialColors = {
