@@ -9,13 +9,13 @@ function calculatePrice() {
     
     // --- Шаг 2: Расчет стоимости УСЛУГИ (как и раньше) ---
     let hourlyRate = 0;
-    if (gameType === 'horror') { hourlyRate = 200; breakdown.push(`Хоррор: 200 ₽/час`); }
-    else if (gameType === 'competitive') { hourlyRate = 130; breakdown.push(`Соревновательная: 130 ₽/час`); }
+    if (gameType === 'horror') { hourlyRate = 220; breakdown.push(`Хоррор: 220 ₽/час`); }
+    else if (gameType === 'competitive') { hourlyRate = 150; breakdown.push(`Соревновательная: 150 ₽/час`); }
     else {
         switch(gameType) {
             case 'indie': hourlyRate = 160; breakdown.push(`Инди: 160 ₽/час`); break;
             case 'aa': hourlyRate = 170; breakdown.push(`AA-игра: 170 ₽/час`); break;
-            case 'aaa': hourlyRate = 180; breakdown.push(`AAA-игра: 180 ₽/час`); break;
+            case 'aaa': hourlyRate = 190; breakdown.push(`AAA-игра: 190 ₽/час`); break;
         }
     }
     
