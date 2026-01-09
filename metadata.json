@@ -1,0 +1,5 @@
+{
+  "name": "Калькулятор заказов (фильмы и игры)",
+  "description": "A dark-themed minimalist calculator for pricing movie requests on stream with specific rules for rating, duration, and origin.",
+  "requestFramePermissions": []
+}
