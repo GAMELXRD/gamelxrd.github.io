@@ -134,7 +134,7 @@ export const handler = async (event: any) => {
       
       // A. Groq AI (HLTB)
       const groqPromise = (async () => {
-          const GROQ_MODEL = "llama3-70b-8192";
+          const GROQ_MODEL = "llama-3.3-70b-versatile";
           try {
               log(`🚀 Starting Groq Request for: "${title}" (${releaseYear})`);
               log(`🤖 Model: ${GROQ_MODEL}`);
