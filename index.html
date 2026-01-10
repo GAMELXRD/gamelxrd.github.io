@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
   <head>
@@ -26,6 +27,7 @@
               'fade-in': 'fadeIn 0.7s ease-out',
               'fade-in-up': 'fadeInUp 0.8s ease-out',
               'pulse-slow': 'pulse 10s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'breath': 'breath 3s ease-in-out infinite',
             },
             keyframes: {
               fadeIn: {
@@ -35,6 +37,16 @@
               fadeInUp: {
                 '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              breath: {
+                 '0%, 100%': { 
+                    boxShadow: '0 0 20px rgba(220, 38, 38, 0.3)', 
+                    borderColor: 'rgba(220, 38, 38, 0.5)' 
+                 },
+                 '50%': { 
+                    boxShadow: '0 0 50px rgba(220, 38, 38, 0.8)', 
+                    borderColor: 'rgba(220, 38, 38, 1)' 
+                 }
               }
             }
           }
@@ -74,7 +86,6 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

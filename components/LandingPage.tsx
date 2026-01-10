@@ -1,12 +1,33 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../services/apiConfig';
 
 interface LandingPageProps {
   onOpenCalculator: () => void;
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
+  const [isLive, setIsLive] = useState(false);
   const avatarUrl = "https://static-cdn.jtvnw.net/jtv_user_pictures/b20cf68c-db35-43c4-945b-f134dd1f1b80-profile_image-300x300.png";
+
+  useEffect(() => {
+    const checkStream = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/check-stream`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsLive(data.isOnline);
+        }
+      } catch (e) {
+        console.warn("Failed to check stream status", e);
+      }
+    };
+
+    checkStream();
+    // Optional: Check every 2 minutes if the user stays on landing
+    const interval = setInterval(checkStream, 120000); 
+    return () => clearInterval(interval);
+  }, []);
 
   const mainLinks = [
     { 
@@ -99,13 +120,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
       
       {/* Profile Section (Compact Horizontal Layout) */}
       <div className="flex flex-row items-center justify-center gap-6 mb-10 relative z-20 px-4 w-full">
-        <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-white/10 p-1 relative group cursor-pointer overflow-hidden shadow-[0_0_50px_rgba(255,255,255,0.1)] flex-shrink-0">
-             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-blue-600 opacity-20 group-hover:opacity-40 transition-opacity animate-pulse-slow"></div>
+        {/* AVATAR CONTAINER */}
+        <div className={`
+             w-24 h-24 md:w-28 md:h-28 rounded-2xl p-1 relative group cursor-pointer overflow-visible flex-shrink-0 transition-all duration-500
+             ${isLive ? 'border-4 border-red-500 animate-breath shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'border-2 border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]'}
+        `}>
+             {/* Breathing background logic for LIVE status */}
+             {!isLive && (
+                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-600 opacity-20 group-hover:opacity-40 transition-opacity animate-pulse-slow overflow-hidden"></div>
+             )}
+             
              <img 
                src={avatarUrl} 
                alt="gamelxrd" 
-               className="w-full h-full rounded-full object-cover relative z-10 transition-transform duration-500 group-hover:scale-105"
+               className="w-full h-full rounded-2xl object-cover relative z-10 transition-transform duration-500 group-hover:scale-105"
              />
+
+             {/* LIVE BADGE */}
+             {isLive && (
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20 bg-red-600 text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-full border-2 border-black tracking-wider animate-bounce shadow-lg">
+                    LIVE
+                </div>
+             )}
         </div>
         
         <div className="flex flex-col text-left">
@@ -113,8 +149,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
               gamelxrd
             </h1>
             <div className="mt-1 inline-block px-1 py-1 w-max">
-               <p className="text-zinc-400 text-xs md:text-sm font-mono tracking-wide">
-                 Микростример на твиче
+               <p className={`${isLive ? 'text-red-400 font-bold animate-pulse' : 'text-zinc-400'} text-xs md:text-sm font-mono tracking-wide transition-colors duration-500`}>
+                 {isLive ? '🔴 СТРИМ ИДЕТ' : 'Микростример на твиче'}
                </p>
             </div>
         </div>
