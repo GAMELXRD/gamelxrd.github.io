@@ -33,15 +33,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   // Debounce search
   useEffect(() => {
-    // If we just selected an item, do NOT run search logic
-    if (skipSearchRef.current) {
-      skipSearchRef.current = false;
-      return;
-    }
-
     // Cancel previous requests immediately when input changes
     if (movieAbortRef.current) movieAbortRef.current.abort();
     if (gameAbortRef.current) gameAbortRef.current.abort();
+
+    // If we just selected an item, do NOT run search logic.
+    // We do NOT reset skipSearchRef here anymore to prevent race conditions (double renders).
+    // It is reset in onChange.
+    if (skipSearchRef.current) {
+      return;
+    }
 
     const timer = setTimeout(async () => {
       const query = input.trim();
@@ -187,7 +188,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
             ref={inputRef}
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+                skipSearchRef.current = false; // Reset skip on user input
+                setInput(e.target.value);
+            }}
             onFocus={() => {
                 // Only show suggestions on focus if we have results and aren't in "selected" state
                 if (input.length >= 3 && hasResults) setShowSuggestions(true);
