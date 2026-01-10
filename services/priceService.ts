@@ -38,6 +38,7 @@ export const calculatePrice = (
     isHorror = hasHorror && !isInteractive;
 
     // Duration: Use user input or default to 4 (Min constraint handled in UI/Logic)
+    // NOTE: Logic ensures minimum 4 hours for pricing calculation
     const duration = Math.max(4, userDuration || 4);
 
     if (isHorror) {
@@ -106,13 +107,18 @@ export const calculatePrice = (
     const episodeCount = Math.max(1, userEpisodes);
     basePrice = pricePerEpisode * episodeCount;
 
+    // Rating Surcharge for TV (< 6.5)
+    // Restored logic: similar to movies, based on percentage of base price
+    if (media.imdbRating < 6.5) {
+      const diff = Math.max(0, 6.5 - media.imdbRating);
+      ratingSurcharge = Math.round(basePrice * (diff * 0.20));
+    }
+
     // Discount for > 20 episodes
     if (episodeCount > 20) {
       discount = Math.round(basePrice * 0.10);
     }
 
-    // No rating or duration surcharges for TV
-    ratingSurcharge = 0;
     durationSurcharge = 0;
 
     tvDetails = {
@@ -166,7 +172,7 @@ export const calculatePrice = (
   if (priority) {
       // For movies: Base + Rating + Duration
       // For games: Base + Rating
-      // For TV: Base
+      // For TV: Base + Rating
       const serviceFee = basePrice + ratingSurcharge + durationSurcharge;
       prioritySurcharge = serviceFee; 
   }

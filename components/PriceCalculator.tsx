@@ -61,7 +61,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
   // Copy Text Generation
   let copyText = `${media.title}`;
   if (media.type === 'game') {
-     copyText += ` | ${gameDuration}ч`;
+     // Ensure we show the calculated duration (min 4) in copy text
+     copyText += ` | ${Math.max(4, gameDuration)}ч`;
   } else if (media.type === 'tv') {
      copyText += ` | ${tvEpisodes} сер.`;
   }
@@ -127,8 +128,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
                 {media.type === 'movie' && result.isRussian && <span className="text-[10px] text-zinc-500 font-bold">(RU/USSR)</span>}
                 
                 {/* GAME Subtext */}
-                {media.type === 'game' && result.isHorror && <span className="text-[10px] text-red-500 font-bold">(HORROR: {gameDuration}ч × 240₽)</span>}
-                {media.type === 'game' && !result.isHorror && <span className="text-[10px] text-zinc-500 font-bold">(Стандарт: {gameDuration}ч × 150₽)</span>}
+                {media.type === 'game' && result.isHorror && <span className="text-[10px] text-red-500 font-bold">(HORROR: {Math.max(4, gameDuration)}ч × 240₽)</span>}
+                {media.type === 'game' && !result.isHorror && <span className="text-[10px] text-zinc-500 font-bold">(Стандарт: {Math.max(4, gameDuration)}ч × 150₽)</span>}
                 
                 {/* TV Subtext */}
                 {media.type === 'tv' && result.tvDetails && (
@@ -204,32 +205,33 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
                     type="range" 
                     min="4" 
                     max={gameSliderMax}
-                    value={gameDuration} 
+                    value={Math.max(4, gameDuration)} // Slider stays valid 
                     onChange={(e) => setGameDuration(parseInt(e.target.value))}
                     className="w-full accent-purple-500 h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
                   />
                   <input
                     type="number"
-                    min="4"
+                    min="1"
                     value={gameDuration}
-                    onChange={(e) => setGameDuration(Math.max(4, parseInt(e.target.value) || 0))}
+                    // Allow free typing, but priceService uses Math.max(4, ...) for calc
+                    onChange={(e) => setGameDuration(parseInt(e.target.value) || 0)}
+                    // On Blur (loss of focus), clamp the value to 4 in the UI
+                    onBlur={() => setGameDuration(Math.max(4, gameDuration))}
                     className="bg-black/40 border border-white/10 px-2 py-1 rounded w-20 text-center font-bold text-white focus:outline-none focus:border-purple-500 transition-colors"
                   />
                 </div>
               </div>
             )}
 
-            {/* Rating Row (Not for TV) */}
-            {media.type !== 'tv' && (
-              <div className={`flex justify-between items-center p-3 rounded-lg transition-colors border ${result.ratingSurcharge > 0 ? 'bg-red-500/10 border-red-500/20' : 'hover:bg-white/5 border-transparent hover:border-white/5'}`}>
-                <span className={result.ratingSurcharge > 0 ? "text-red-300" : "text-zinc-300"}>
+            {/* Rating Row (Restored for TV as well) */}
+            <div className={`flex justify-between items-center p-3 rounded-lg transition-colors border ${result.ratingSurcharge > 0 ? 'bg-red-500/10 border-red-500/20' : 'hover:bg-white/5 border-transparent hover:border-white/5'}`}>
+               <span className={result.ratingSurcharge > 0 ? "text-red-300" : "text-zinc-300"}>
                   Рейтинг <span className="opacity-70">({media.type === 'game' ? media.rating : media.imdbRating})</span>
-                </span>
-                <span className={result.ratingSurcharge > 0 ? "text-red-300 font-bold" : "text-zinc-500"}>
+               </span>
+               <span className={result.ratingSurcharge > 0 ? "text-red-300 font-bold" : "text-zinc-500"}>
                   +{result.ratingSurcharge} ₽
-                </span>
-              </div>
-            )}
+               </span>
+            </div>
 
             {/* Duration Row (Movies only) */}
             {media.type === 'movie' && (
@@ -248,8 +250,9 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
                <div className="flex justify-between items-center p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                  <span className="text-green-300 flex items-center gap-2">
                   Скидка 
-                  <span className="opacity-70 text-[10px] border border-green-500/30 px-1 rounded">
-                    {media.type === 'tv' ? '>20 серий' : 'Long Game'}
+                  <span className="opacity-70 text-[10px] border border-green-500/30 px-1 rounded flex items-center gap-1">
+                    {media.type === 'tv' ? 'Many episodes' : 'Long Game'}
+                    <span className="font-bold text-white/90">10%</span>
                   </span>
                  </span>
                  <span className="text-green-300 font-bold">
