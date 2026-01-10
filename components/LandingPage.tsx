@@ -122,10 +122,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
       <div className="flex flex-row items-center justify-center gap-6 mb-10 relative z-20 px-4 w-full">
         {/* AVATAR CONTAINER */}
         <div className={`
-             w-24 h-24 md:w-28 md:h-28 rounded-2xl p-1 relative group cursor-pointer overflow-visible flex-shrink-0 transition-all duration-500
-             ${isLive ? 'border-4 border-red-500 animate-breath shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'border-2 border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]'}
+             w-24 h-24 md:w-28 md:h-28 rounded-2xl p-1 relative group cursor-pointer flex-shrink-0 transition-all duration-500
+             ${isLive ? 'border-2 border-red-500' : 'border-2 border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]'}
         `}>
              {/* Breathing background logic for LIVE status */}
+             {isLive && (
+                <>
+                  <div className="absolute inset-0 rounded-2xl border-2 border-red-500 animate-ripple opacity-0"></div>
+                  <div className="absolute inset-0 rounded-2xl border-2 border-red-500 animate-ripple opacity-0" style={{ animationDelay: '1s' }}></div>
+                </>
+             )}
+
              {!isLive && (
                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-600 opacity-20 group-hover:opacity-40 transition-opacity animate-pulse-slow overflow-hidden"></div>
              )}
@@ -138,7 +145,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
 
              {/* LIVE BADGE */}
              {isLive && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20 bg-red-600 text-white text-[10px] font-black uppercase px-3 py-0.5 rounded-full border-2 border-black tracking-wider animate-bounce shadow-lg">
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20 bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded border-2 border-black tracking-widest shadow-lg">
                     LIVE
                 </div>
              )}
@@ -149,8 +156,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
               gamelxrd
             </h1>
             <div className="mt-1 inline-block px-1 py-1 w-max">
-               <p className={`${isLive ? 'text-red-400 font-bold animate-pulse' : 'text-zinc-400'} text-xs md:text-sm font-mono tracking-wide transition-colors duration-500`}>
-                 {isLive ? '🔴 СТРИМ ИДЕТ' : 'Микростример на твиче'}
+               <p className="text-zinc-400 text-xs md:text-sm font-mono tracking-wide">
+                 Микростример на твиче
                </p>
             </div>
         </div>
