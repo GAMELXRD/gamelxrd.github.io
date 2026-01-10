@@ -9,8 +9,12 @@ import MovieCard from './components/MovieCard';
 import GameCard from './components/GameCard';
 import PriceCalculator from './components/PriceCalculator';
 import StarBackground from './components/StarBackground';
+import LandingPage from './components/LandingPage';
 
 function App() {
+  const [view, setView] = useState<'landing' | 'calculator'>('landing');
+
+  // Calculator State
   const [media, setMedia] = useState<MovieData | GameData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,14 +87,20 @@ function App() {
     }, 500);
   }, [media]);
 
+  // Navigation Logic
+  const goHome = () => {
+    setView('landing');
+    handleClear(); // Reset calculator state when going home
+  };
+
   return (
-    <div className="relative min-h-screen text-zinc-100 selection:bg-purple-500/30 selection:text-white font-sans overflow-hidden">
+    <div className="relative min-h-screen text-zinc-100 selection:bg-purple-500/30 selection:text-white font-sans overflow-x-hidden">
       
-      {/* Background Layers */}
+      {/* Background Layers - Persistent across views */}
       <div className="fixed inset-0 z-0 bg-[#050505]">
         
-        {/* Dynamic Nebula Effect */}
-        {media?.posterUrl && (
+        {/* Dynamic Nebula Effect (Only visible in Calculator when media is selected) */}
+        {view === 'calculator' && media?.posterUrl && (
           <>
             <div 
               className={`absolute inset-0 bg-cover bg-center transition-all ease-out blur-[120px] animate-pulse-slow
@@ -111,63 +121,85 @@ function App() {
           </>
         )}
 
-        <StarBackground isWarpSpeed={loading} />
+        <StarBackground isWarpSpeed={view === 'calculator' && loading} />
         
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/80"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20 flex flex-col items-center min-h-screen">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12 min-h-screen flex flex-col">
         
-        <header className="mb-16 text-center animate-fade-in">
-          <h1 className="text-sm md:text-base font-medium text-zinc-400 uppercase tracking-[0.3em] mb-3 backdrop-blur-sm inline-block px-4 py-1 rounded-full bg-white/5 border border-white/5">
-            калькулятор
-          </h1>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500 uppercase tracking-tighter drop-shadow-2xl">
-            Заказ Игр и Фильмов
-          </h2>
-        </header>
+        {view === 'landing' ? (
+          <LandingPage onOpenCalculator={() => setView('calculator')} />
+        ) : (
+          // CALCULATOR VIEW
+          <div className="flex flex-col items-center w-full animate-fade-in">
+            
+            {/* Navigation Header */}
+            <div className="w-full max-w-5xl flex items-center justify-between mb-8 md:mb-12">
+               <button 
+                 onClick={goHome}
+                 className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group px-3 py-2 rounded-lg hover:bg-white/5"
+               >
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:-translate-x-1 transition-transform">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                 </svg>
+                 <span className="text-sm font-bold uppercase tracking-wider">Назад</span>
+               </button>
 
-        <SearchBar 
-          onSelect={handleMediaSelect}
-          onClear={handleClear}
-          isLoading={loading}
-        />
+               <div className="text-right hidden md:block">
+                  <h1 className="text-xs font-mono text-zinc-500 uppercase tracking-widest">Калькулятор заказов</h1>
+               </div>
+            </div>
 
-        {error && (
-          <div className="backdrop-blur-md bg-red-500/10 border border-red-500/20 px-6 py-4 rounded-xl mb-10 max-w-xl text-center shadow-[0_0_30px_rgba(239,68,68,0.2)] animate-fade-in">
-             <p className="text-red-200 font-light">{error}</p>
-          </div>
-        )}
+            <header className="mb-12 text-center">
+              <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500 uppercase tracking-tighter drop-shadow-2xl">
+                Заказ игр и фильмов
+              </h2>
+            </header>
 
-        {media && (
-          <div className={`w-full transition-all duration-500 ease-in-out transform
-            ${isExiting 
-              ? 'opacity-0 scale-95 blur-lg translate-y-4' 
-              : 'opacity-100 scale-100 blur-0 translate-y-0 animate-fade-in-up'
-            }`}>
-            {media.type === 'movie' ? (
-               <MovieCard 
-                  movie={media as MovieData} 
-                  calculation={calculatePrice(media as MovieData, { priority: false })} 
-               />
-            ) : (
-               <GameCard 
-                  game={media as GameData} 
-                  calculation={calculatePrice(media as GameData, { priority: false })} 
-               />
+            <SearchBar 
+              onSelect={handleMediaSelect}
+              onClear={handleClear}
+              isLoading={loading}
+            />
+
+            {error && (
+              <div className="backdrop-blur-md bg-red-500/10 border border-red-500/20 px-6 py-4 rounded-xl mb-10 max-w-xl text-center shadow-[0_0_30px_rgba(239,68,68,0.2)] animate-fade-in">
+                <p className="text-red-200 font-light">{error}</p>
+              </div>
+            )}
+
+            {media && (
+              <div className={`w-full transition-all duration-500 ease-in-out transform
+                ${isExiting 
+                  ? 'opacity-0 scale-95 blur-lg translate-y-4' 
+                  : 'opacity-100 scale-100 blur-0 translate-y-0 animate-fade-in-up'
+                }`}>
+                {media.type === 'movie' ? (
+                  <MovieCard 
+                      movie={media as MovieData} 
+                      calculation={calculatePrice(media as MovieData, { priority: false })} 
+                  />
+                ) : (
+                  <GameCard 
+                      game={media as GameData} 
+                      calculation={calculatePrice(media as GameData, { priority: false })} 
+                  />
+                )}
+                
+                <PriceCalculator media={media} />
+              </div>
             )}
             
-            <PriceCalculator media={media} />
-          </div>
-        )}
-        
-        {!media && !loading && !error && (
-           <div className="mt-auto pt-20 text-center opacity-40 hover:opacity-100 transition-opacity duration-500">
-              <div className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
-                Сделано с 💖 gamelxrd
+            {!media && !loading && !error && (
+              <div className="mt-20 text-center opacity-40">
+                  <div className="text-xs font-mono text-zinc-600 uppercase tracking-widest">
+                    
+                  </div>
               </div>
-           </div>
+            )}
+          </div>
         )}
 
       </div>
