@@ -150,7 +150,7 @@ function App() {
           <div className="flex flex-col items-center w-full animate-fade-in">
             
             {/* Navigation Header */}
-            <div className="w-full max-w-5xl flex items-center justify-between mb-8 md:mb-12">
+            <div className="w-full max-w-5xl flex items-center justify-between mb-8 md:mb-8">
                <button 
                  onClick={goHome}
                  className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group px-3 py-2 rounded-lg hover:bg-white/5"
@@ -166,8 +166,8 @@ function App() {
                </div>
             </div>
 
-            <header className="mb-12 text-center">
-              <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500 uppercase tracking-tighter drop-shadow-2xl">
+            <header className="mb-8 text-center">
+              <h2 className="inline-block text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500 uppercase tracking-tighter drop-shadow-2xl px-4 py-2">
                 Заказ игр и фильмов
               </h2>
             </header>
