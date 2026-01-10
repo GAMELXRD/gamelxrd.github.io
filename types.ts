@@ -1,8 +1,8 @@
 
-export type MediaType = 'movie' | 'game';
+export type MediaType = 'movie' | 'game' | 'tv';
 
 export interface MovieData {
-  type: 'movie';
+  type: 'movie' | 'tv';
   title: string;
   originalTitle?: string;
   year: number;
@@ -16,6 +16,9 @@ export interface MovieData {
   kinopoiskUrl?: string;
   wikipediaUrl?: string;
   description?: string;
+  // TV Specific
+  totalSeasons?: number;
+  totalEpisodes?: number;
 }
 
 export interface GameData {

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { searchMovies } from '../services/movieService';
+import { searchMovies, searchTv } from '../services/movieService';
 import { searchGames } from '../services/gameService';
 import { MovieSuggestion } from '../types';
 
@@ -17,103 +17,90 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [input, setInput] = useState("");
   const [movieSuggestions, setMovieSuggestions] = useState<MovieSuggestion[]>([]);
+  const [tvSuggestions, setTvSuggestions] = useState<MovieSuggestion[]>([]);
   const [gameSuggestions, setGameSuggestions] = useState<MovieSuggestion[]>([]);
   
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingMovies, setLoadingMovies] = useState(false);
+  const [loadingTv, setLoadingTv] = useState(false);
   const [loadingGames, setLoadingGames] = useState(false);
   
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null); // Added ref for input control
+  const inputRef = useRef<HTMLInputElement>(null);
   const skipSearchRef = useRef(false);
   
-  // Refs for abort controllers
   const movieAbortRef = useRef<AbortController | null>(null);
+  const tvAbortRef = useRef<AbortController | null>(null);
   const gameAbortRef = useRef<AbortController | null>(null);
 
   // Debounce search
   useEffect(() => {
-    // Cancel previous requests immediately when input changes
     if (movieAbortRef.current) movieAbortRef.current.abort();
+    if (tvAbortRef.current) tvAbortRef.current.abort();
     if (gameAbortRef.current) gameAbortRef.current.abort();
 
-    // If we just selected an item, do NOT run search logic.
-    // We do NOT reset skipSearchRef here anymore to prevent race conditions (double renders).
-    // It is reset in onChange.
-    if (skipSearchRef.current) {
-      return;
-    }
+    if (skipSearchRef.current) return;
 
     const timer = setTimeout(async () => {
       const query = input.trim();
 
-      // Double check ref inside timeout in case selection happened during wait
-      if (skipSearchRef.current) {
-          return;
-      }
+      if (skipSearchRef.current) return;
 
       if (query.length >= 3) {
         setShowSuggestions(true);
         
-        // Setup new abort controllers
         movieAbortRef.current = new AbortController();
+        tvAbortRef.current = new AbortController();
         gameAbortRef.current = new AbortController();
         
         // --- MOVIE SEARCH ---
         setLoadingMovies(true);
         searchMovies(query, movieAbortRef.current.signal)
           .then(results => {
-            // Only update if input hasn't changed and we aren't skipping
-            if (input.trim() === query && !skipSearchRef.current) {
-               setMovieSuggestions(results);
-            }
+            if (input.trim() === query && !skipSearchRef.current) setMovieSuggestions(results);
           })
-          .catch(e => {
-             // Ignore abort errors
-             if (e.name !== 'AbortError') console.error(e);
+          .catch(e => { if (e.name !== 'AbortError') console.error(e); })
+          .finally(() => { if (!skipSearchRef.current) setLoadingMovies(false); });
+
+        // --- TV SEARCH ---
+        setLoadingTv(true);
+        searchTv(query, tvAbortRef.current.signal)
+          .then(results => {
+            if (input.trim() === query && !skipSearchRef.current) setTvSuggestions(results);
           })
-          .finally(() => {
-             // Safe reset
-             if (!skipSearchRef.current) setLoadingMovies(false);
-          });
+          .catch(e => { if (e.name !== 'AbortError') console.error(e); })
+          .finally(() => { if (!skipSearchRef.current) setLoadingTv(false); });
 
         // --- GAME SEARCH ---
         setLoadingGames(true);
         searchGames(query, gameAbortRef.current.signal)
           .then(results => {
-             if (input.trim() === query && !skipSearchRef.current) {
-                setGameSuggestions(results);
-             }
+             if (input.trim() === query && !skipSearchRef.current) setGameSuggestions(results);
           })
-          .catch(e => {
-             if (e.name !== 'AbortError') console.error(e);
-          })
-          .finally(() => {
-              if (!skipSearchRef.current) setLoadingGames(false);
-          });
+          .catch(e => { if (e.name !== 'AbortError') console.error(e); })
+          .finally(() => { if (!skipSearchRef.current) setLoadingGames(false); });
 
       } else {
         setMovieSuggestions([]);
+        setTvSuggestions([]);
         setGameSuggestions([]);
         setShowSuggestions(false);
         setLoadingMovies(false);
+        setLoadingTv(false);
         setLoadingGames(false);
         
-        if (query.length === 0 && onClear) {
-          onClear();
-        }
+        if (query.length === 0 && onClear) onClear();
       }
     }, 500);
 
     return () => {
        clearTimeout(timer);
-       // Cleanup on unmount or re-effect: Abort any pending
        if (movieAbortRef.current) movieAbortRef.current.abort();
+       if (tvAbortRef.current) tvAbortRef.current.abort();
        if (gameAbortRef.current) gameAbortRef.current.abort();
     };
   }, [input, onClear]);
 
-  // Click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -125,27 +112,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }, []);
 
   const handleSelect = (item: MovieSuggestion) => {
-    // 1. Set flag to prevent useEffect from triggering a new search
     skipSearchRef.current = true;
-    
-    // 2. Abort any pending searches immediately
     if (movieAbortRef.current) movieAbortRef.current.abort();
+    if (tvAbortRef.current) tvAbortRef.current.abort();
     if (gameAbortRef.current) gameAbortRef.current.abort();
 
-    // 3. Update input visually
     setInput(item.title);
-    
-    // 4. NUCLEAR OPTION: Instantly clear all search states
     setMovieSuggestions([]);
+    setTvSuggestions([]);
     setGameSuggestions([]);
     setShowSuggestions(false);
     setLoadingMovies(false);
+    setLoadingTv(false);
     setLoadingGames(false);
-    
-    // 5. Blur the input to prevent accidental reopening on focus events
     inputRef.current?.blur();
-
-    // 6. Trigger parent action
     onSelect(item);
   };
 
@@ -153,20 +133,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
     e.preventDefault();
     if (input.trim().length < 2) return;
 
-    // Smart submit: Pick first available result
-    if (movieSuggestions.length > 0) {
-      handleSelect(movieSuggestions[0]);
-    } else if (gameSuggestions.length > 0) {
-      handleSelect(gameSuggestions[0]);
-    }
+    if (movieSuggestions.length > 0) handleSelect(movieSuggestions[0]);
+    else if (tvSuggestions.length > 0) handleSelect(tvSuggestions[0]);
+    else if (gameSuggestions.length > 0) handleSelect(gameSuggestions[0]);
   };
 
-  const hasResults = movieSuggestions.length > 0 || gameSuggestions.length > 0;
-  
-  // Spinner logic: 
-  // Show if parent is loading (isLoading) OR if local search is active (isSearching)
-  // BUT: If skipSearchRef is true (item selected), ignore local search state visually
-  const isSearching = (loadingMovies || loadingGames) && !skipSearchRef.current;
+  const hasResults = movieSuggestions.length > 0 || tvSuggestions.length > 0 || gameSuggestions.length > 0;
+  const isSearching = (loadingMovies || loadingTv || loadingGames) && !skipSearchRef.current;
   const showSpinner = isLoading || isSearching;
 
   return (
@@ -189,14 +162,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
             type="text"
             value={input}
             onChange={(e) => {
-                skipSearchRef.current = false; // Reset skip on user input
+                skipSearchRef.current = false;
                 setInput(e.target.value);
             }}
             onFocus={() => {
-                // Only show suggestions on focus if we have results and aren't in "selected" state
                 if (input.length >= 3 && hasResults) setShowSuggestions(true);
             }}
-            placeholder="Поиск фильмов и игр..."
+            placeholder="Поиск фильмов, сериалов и игр..."
             className="w-full bg-transparent text-white text-xl md:text-2xl py-5 pl-6 pr-16 focus:outline-none placeholder-zinc-500 font-light tracking-wide rounded-2xl"
             disabled={isLoading}
           />
@@ -215,7 +187,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Dropdown Suggestions */}
         {showSuggestions && hasResults && (
-          <div className="absolute top-full left-0 right-0 bg-black/90 backdrop-blur-2xl border-x border-b border-white/30 rounded-b-2xl overflow-hidden shadow-2xl animate-fade-in z-50 max-h-[60vh] overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 bg-black/90 backdrop-blur-2xl border-x border-b border-white/30 rounded-b-2xl overflow-hidden shadow-2xl animate-fade-in z-50 max-h-[60vh] overflow-y-auto custom-scrollbar">
             
             {/* Movies Section */}
             {(movieSuggestions.length > 0) && (
@@ -227,6 +199,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
                  <ul>
                     {movieSuggestions.map((item) => (
                       <SuggestionItem key={`m-${item.imdbID}`} item={item} onClick={() => handleSelect(item)} />
+                    ))}
+                 </ul>
+              </div>
+            )}
+
+            {/* TV Section */}
+            {(tvSuggestions.length > 0) && (
+              <div className="border-b border-white/10 last:border-0">
+                 <div className="px-4 py-2 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex justify-between items-center">
+                    <span>Сериалы</span>
+                    {loadingTv && <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>}
+                 </div>
+                 <ul>
+                    {tvSuggestions.map((item) => (
+                      <SuggestionItem key={`t-${item.imdbID}`} item={item} onClick={() => handleSelect(item)} />
                     ))}
                  </ul>
               </div>
@@ -260,11 +247,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 
-// Helper component for list items to keep code clean
+// Helper component for list items
 const SuggestionItem: React.FC<{ item: MovieSuggestion; onClick: () => void }> = ({ item, onClick }) => (
   <li 
     onClick={(e) => {
-        e.stopPropagation(); // Prevent bubbling issues
+        e.stopPropagation(); 
         onClick();
     }}
     className="flex items-center gap-4 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"

@@ -1,3 +1,4 @@
+
 import { MovieData, GameData, CalculationResult } from "../types";
 
 interface CalculateOptions {
@@ -22,44 +23,8 @@ export const calculatePrice = (
   let isHorror = false;
   let gameCost = 0;
 
-  // === MOVIE LOGIC ===
-  if (media.type === 'movie') {
-    const RUSSIAN_KEYWORDS = ["Russia", "Rossiya", "Soviet Union", "USSR", "SSSR", "Россия", "СССР", "Советский Союз"];
-    isRussian = media.countries.some(c => 
-      RUSSIAN_KEYWORDS.some(k => c.toLowerCase().includes(k.toLowerCase()))
-    );
-    
-    basePrice = isRussian ? 2000 : 500;
-
-    // Rating Surcharge (< 6.5)
-    if (media.imdbRating < 6.5) {
-      const diff = Math.max(0, 6.5 - media.imdbRating);
-      ratingSurcharge = Math.round(basePrice * (diff * 0.20));
-    }
-
-    // Duration Surcharge (> 100 min)
-    const DURATION_THRESHOLD = 100;
-    if (media.runtimeMinutes > DURATION_THRESHOLD) {
-      const diff = media.runtimeMinutes - DURATION_THRESHOLD;
-      const blocks = Math.ceil(diff / 10);
-      durationSurcharge = blocks * 20;
-    }
-
-    // Banned Studios Warning
-    const BANNED_KEYWORDS = [
-      "disney", "amazon", "netflix", "warner bros", "warner brothers", "wb", 
-      "hbo", "pixar", "marvel", "universal pictures", "universal studios"
-    ];
-    const hasBannedStudio = media.productionCompanies.some(company => 
-      BANNED_KEYWORDS.some(banned => company.toLowerCase().includes(banned))
-    );
-    if (hasBannedStudio && media.year > 2015) {
-      warnings.push("Внимание: Фильм выпущен студией из 'черного списка'. Просмотр может быть перенесен на Boosty.");
-    }
-  } 
-  
   // === GAME LOGIC ===
-  else {
+  if (media.type === 'game') {
     // Genres check
     const horrorKeywords = ["horror", "survival horror", "psychological horror", "ужасы", "хоррор"];
     const interactiveKeywords = ["interactive movie", "interactive story", "fmv", "интерактивное кино", "интерактивная история", "point & click", "point-and-click", "point-n-click", "visual novel", "визуальная новелла"];
@@ -111,6 +76,42 @@ export const calculatePrice = (
     // Game Cost
     if (gameCostIncluded) {
       gameCost = media.steamPriceRub;
+    }
+  }
+  
+  // === MOVIE & TV LOGIC ===
+  else {
+    const RUSSIAN_KEYWORDS = ["Russia", "Rossiya", "Soviet Union", "USSR", "SSSR", "Россия", "СССР", "Советский Союз"];
+    isRussian = media.countries.some(c => 
+      RUSSIAN_KEYWORDS.some(k => c.toLowerCase().includes(k.toLowerCase()))
+    );
+    
+    basePrice = isRussian ? 2000 : 500;
+
+    // Rating Surcharge (< 6.5)
+    if (media.imdbRating < 6.5) {
+      const diff = Math.max(0, 6.5 - media.imdbRating);
+      ratingSurcharge = Math.round(basePrice * (diff * 0.20));
+    }
+
+    // Duration Surcharge (> 100 min)
+    const DURATION_THRESHOLD = 100;
+    if (media.runtimeMinutes > DURATION_THRESHOLD) {
+      const diff = media.runtimeMinutes - DURATION_THRESHOLD;
+      const blocks = Math.ceil(diff / 10);
+      durationSurcharge = blocks * 20;
+    }
+
+    // Banned Studios Warning
+    const BANNED_KEYWORDS = [
+      "disney", "amazon", "netflix", "warner bros", "warner brothers", "wb", 
+      "hbo", "pixar", "marvel", "universal pictures", "universal studios"
+    ];
+    const hasBannedStudio = media.productionCompanies.some(company => 
+      BANNED_KEYWORDS.some(banned => company.toLowerCase().includes(banned))
+    );
+    if (hasBannedStudio && media.year > 2015) {
+      warnings.push("Внимание: Производитель из 'черного списка'. Просмотр может быть перенесен на Boosty.");
     }
   }
 

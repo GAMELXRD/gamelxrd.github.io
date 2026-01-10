@@ -9,6 +9,7 @@ interface MovieCardProps {
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie, calculation }) => {
   const isWatched = movie.userRating !== undefined;
+  const isTv = movie.type === 'tv';
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 w-full max-w-5xl mx-auto mb-10 items-stretch">
@@ -38,7 +39,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, calculation }) => {
                       flex flex-col items-center justify-center w-12 h-12 rounded-lg backdrop-blur-md border border-white/20 shadow-lg
                       ${movie.imdbRating < 6.5 ? 'bg-red-500/80 text-white' : 'bg-black/60 text-white'}
                   `}>
-                      <span className="text-[10px] font-bold uppercase opacity-80">IMDb</span>
+                      <span className="text-[10px] font-bold uppercase opacity-80">{isTv ? 'TMDB' : 'IMDb'}</span>
                       <span className="text-sm font-bold">{movie.imdbRating.toFixed(1)}</span>
                   </div>
               )}
@@ -51,6 +52,15 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, calculation }) => {
                   </div>
               )}
           </div>
+
+          {/* Type Banner for TV */}
+          {isTv && (
+              <div className="absolute top-3 left-3">
+                  <div className="bg-blue-600/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-md shadow-lg border border-blue-400/30 uppercase tracking-widest">
+                      Сериал
+                  </div>
+              </div>
+          )}
 
           {/* Watched Banner */}
           {isWatched && (
@@ -77,9 +87,27 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, calculation }) => {
                 <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm font-mono text-zinc-300 mb-8">
                     <span className="bg-white/10 px-3 py-1 rounded-full border border-white/5">{movie.year}</span>
                     <span className="text-zinc-600">•</span>
-                    <span className="bg-white/10 px-3 py-1 rounded-full border border-white/5">{movie.runtimeMinutes} мин</span>
+                    
+                    {isTv ? (
+                        <>
+                            <span className="bg-white/10 px-3 py-1 rounded-full border border-white/5">
+                                {movie.totalSeasons || 1} сезон(ов)
+                            </span>
+                            <span className="text-zinc-600">•</span>
+                            <span className="bg-white/10 px-3 py-1 rounded-full border border-white/5">
+                                {movie.totalEpisodes || 0} эпизодов
+                            </span>
+                            <span className="text-zinc-600">•</span>
+                            <span className="text-zinc-400">
+                                ≈ {Math.round(movie.runtimeMinutes / 60)} ч.
+                            </span>
+                        </>
+                    ) : (
+                        <span className="bg-white/10 px-3 py-1 rounded-full border border-white/5">{movie.runtimeMinutes} мин</span>
+                    )}
+                    
                     <span className="text-zinc-600">•</span>
-                    <span className="uppercase tracking-wider">{movie.countries.join(", ")}</span>
+                    <span className="uppercase tracking-wider">{movie.countries.slice(0,3).join(", ")}</span>
                 </div>
 
                 {movie.description && (
@@ -94,6 +122,9 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, calculation }) => {
             <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-white/5">
                 {movie.imdbUrl && (
                     <a href={movie.imdbUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-[#F5C518]/10 text-[#F5C518] border border-[#F5C518]/20 hover:bg-[#F5C518] hover:text-black transition-all text-xs font-bold uppercase tracking-widest">IMDb</a>
+                )}
+                {movie.kinopoiskUrl && (
+                    <a href={movie.kinopoiskUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-[#f60]/10 text-[#f60] border border-[#f60]/20 hover:bg-[#f60] hover:text-white transition-all text-xs font-bold uppercase tracking-widest">KP</a>
                 )}
                 {movie.wikipediaUrl && (
                      <a href={movie.wikipediaUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white hover:text-black transition-all text-xs font-bold uppercase tracking-widest">Wiki</a>

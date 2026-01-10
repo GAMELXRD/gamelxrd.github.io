@@ -116,7 +116,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
             {/* Rating Row */}
             <div className={`flex justify-between items-center p-3 rounded-lg transition-colors border ${result.ratingSurcharge > 0 ? 'bg-red-500/10 border-red-500/20' : 'hover:bg-white/5 border-transparent hover:border-white/5'}`}>
               <span className={result.ratingSurcharge > 0 ? "text-red-300" : "text-zinc-300"}>
-                Рейтинг <span className="opacity-70">({media.type === 'movie' ? media.imdbRating : media.rating})</span>
+                Рейтинг <span className="opacity-70">({media.type === 'game' ? media.rating : media.imdbRating})</span>
               </span>
               <span className={result.ratingSurcharge > 0 ? "text-red-300 font-bold" : "text-zinc-500"}>
                 +{result.ratingSurcharge} ₽
@@ -220,7 +220,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({ media }) => {
                   
                   {/* Copy Area with Instruction */}
                   <div className="space-y-2">
-                    <p className="text-zinc-500 text-[10px] md:text-xs text-center uppercase tracking-wide opacity-80">
+                    <p className="text-zinc-500 text-[10px] md:text-xs text-center tracking-wide opacity-80">
                         Пожалуйста, скопируйте текст ниже и укажите его в донате
                     </p>
                     <div 

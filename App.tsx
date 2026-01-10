@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { MovieData, GameData, MovieSuggestion } from './types';
-import { fetchMovieDetails } from './services/movieService';
+import { fetchMovieDetails, fetchTvDetails } from './services/movieService';
 import { fetchGameData } from './services/gameService';
 import { calculatePrice } from './services/priceService';
 import SearchBar from './components/SearchBar';
@@ -46,6 +46,18 @@ function App() {
     }
   };
 
+  const handleSelectTv = async (tmdbID: string) => {
+    startLoading();
+    try {
+      const data = await fetchTvDetails(tmdbID);
+      setMedia({ ...data, type: 'tv' });
+    } catch (err) {
+      setError("Не удалось загрузить информацию о сериале.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearchGame = async (queryId: string, year?: string, preloadedPoster?: string) => {
     startLoading();
     try {
@@ -67,6 +79,8 @@ function App() {
   const handleMediaSelect = (suggestion: MovieSuggestion) => {
      if (suggestion.mediaType === 'movie') {
         handleSelectMovie(suggestion.imdbID);
+     } else if (suggestion.mediaType === 'tv') {
+        handleSelectTv(suggestion.imdbID);
      } else {
         // For games, suggestion.imdbID holds the RAWG Slug (see services/gameService.ts)
         handleSearchGame(suggestion.imdbID, suggestion.year, suggestion.poster);
@@ -176,7 +190,7 @@ function App() {
                   ? 'opacity-0 scale-95 blur-lg translate-y-4' 
                   : 'opacity-100 scale-100 blur-0 translate-y-0 animate-fade-in-up'
                 }`}>
-                {media.type === 'movie' ? (
+                {media.type === 'movie' || media.type === 'tv' ? (
                   <MovieCard 
                       movie={media as MovieData} 
                       calculation={calculatePrice(media as MovieData, { priority: false })} 
