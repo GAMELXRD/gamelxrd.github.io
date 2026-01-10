@@ -5,13 +5,14 @@ interface CalculateOptions {
   priority: boolean;
   gameCostIncluded?: boolean; // Toggle for games
   userDuration?: number; // Override for games
+  userEpisodes?: number; // Override for TV
 }
 
 export const calculatePrice = (
   media: MovieData | GameData, 
   options: CalculateOptions
 ): CalculationResult => {
-  const { priority, gameCostIncluded = false, userDuration } = options;
+  const { priority, gameCostIncluded = false, userDuration, userEpisodes = 1 } = options;
   const warnings: string[] = [];
 
   let basePrice = 0;
@@ -22,6 +23,7 @@ export const calculatePrice = (
   let isRussian = false;
   let isHorror = false;
   let gameCost = 0;
+  let tvDetails = undefined;
 
   // === GAME LOGIC ===
   if (media.type === 'game') {
@@ -79,7 +81,48 @@ export const calculatePrice = (
     }
   }
   
-  // === MOVIE & TV LOGIC ===
+  // === TV SHOW LOGIC ===
+  else if (media.type === 'tv') {
+    const RUSSIAN_KEYWORDS = ["Russia", "Rossiya", "Soviet Union", "USSR", "SSSR", "Россия", "СССР", "Советский Союз"];
+    isRussian = media.countries.some(c => 
+      RUSSIAN_KEYWORDS.some(k => c.toLowerCase().includes(k.toLowerCase()))
+    );
+
+    // Determine price per episode based on SINGLE episode runtime
+    const episodeRuntime = media.averageRuntime || 45; 
+    let pricePerEpisode = 0;
+
+    // Logic: 
+    // <= 35 min is short (covers 20-30 min sitcoms/anime)
+    // > 35 min is long (covers 40-60 min dramas)
+    const isShortEpisode = episodeRuntime <= 35; 
+
+    if (isRussian) {
+      pricePerEpisode = isShortEpisode ? 1000 : 1700;
+    } else {
+      pricePerEpisode = isShortEpisode ? 250 : 400;
+    }
+
+    const episodeCount = Math.max(1, userEpisodes);
+    basePrice = pricePerEpisode * episodeCount;
+
+    // Discount for > 20 episodes
+    if (episodeCount > 20) {
+      discount = Math.round(basePrice * 0.10);
+    }
+
+    // No rating or duration surcharges for TV
+    ratingSurcharge = 0;
+    durationSurcharge = 0;
+
+    tvDetails = {
+      pricePerEpisode,
+      episodeCount,
+      isShortEpisode
+    };
+  }
+
+  // === MOVIE LOGIC ===
   else {
     const RUSSIAN_KEYWORDS = ["Russia", "Rossiya", "Soviet Union", "USSR", "SSSR", "Россия", "СССР", "Советский Союз"];
     isRussian = media.countries.some(c => 
@@ -115,19 +158,19 @@ export const calculatePrice = (
     }
   }
 
-  // === COMMON ===
-  // Note: For Priority calculation, we use the Service Fee (Base + Rating + DurationSurcharge)
-  // We exclude the discount from the Priority calculation base (Priority is expensive).
-  // We exclude Game Cost from Priority.
-  const baseServiceFee = basePrice + ratingSurcharge + durationSurcharge + superLongSurcharge;
-  const prioritySurcharge = priority ? (basePrice + ratingSurcharge + durationSurcharge) : 0; 
-  // Priority logic: Usually simply doubles the "work" cost. 
-  // We don't double the "Super Long Surcharge" in priority (it's already massive), 
-  // nor do we reduce priority by the discount.
-  // Priority = 100% of standard service fee (Base + Rating + MovieDuration).
-
+  // === COMMON CALCULATION ===
   const totalBeforePriority = (basePrice + ratingSurcharge + durationSurcharge + superLongSurcharge) - discount + gameCost;
   
+  // Priority surcharge calculation
+  let prioritySurcharge = 0;
+  if (priority) {
+      // For movies: Base + Rating + Duration
+      // For games: Base + Rating
+      // For TV: Base
+      const serviceFee = basePrice + ratingSurcharge + durationSurcharge;
+      prioritySurcharge = serviceFee; 
+  }
+
   const finalPrice = totalBeforePriority + prioritySurcharge;
 
   return {
@@ -143,6 +186,7 @@ export const calculatePrice = (
     totalBeforePriority,
     prioritySurcharge,
     finalPrice,
-    warnings
+    warnings,
+    tvDetails
   };
 };

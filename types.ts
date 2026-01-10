@@ -6,7 +6,8 @@ export interface MovieData {
   title: string;
   originalTitle?: string;
   year: number;
-  runtimeMinutes: number;
+  runtimeMinutes: number; // For TV: Total runtime
+  averageRuntime?: number; // For TV: Average episode runtime
   imdbRating: number;
   userRating?: number;
   posterUrl?: string;
@@ -19,6 +20,7 @@ export interface MovieData {
   // TV Specific
   totalSeasons?: number;
   totalEpisodes?: number;
+  seasons?: { season_number: number; episode_count: number }[]; // New: Detailed season info
 }
 
 export interface GameData {
@@ -48,9 +50,9 @@ export interface CalculationResult {
   basePrice: number;
   ratingSurcharge: number;
   durationSurcharge: number;
-  discount: number; // New: 10% discount for > 24h games
+  discount: number; // New: 10% discount for > 24h games or > 20 TV episodes
   superLongSurcharge: number; // New: 100% surcharge per 100h for > 150h games
-  isRussian: boolean; // Only for movies
+  isRussian: boolean; // Only for movies/tv
   isHorror: boolean; // Only for games
   gameCostIncluded: boolean; // Only for games
   gameCost: number; // Only for games
@@ -58,4 +60,10 @@ export interface CalculationResult {
   prioritySurcharge: number;
   finalPrice: number;
   warnings: string[];
+  // TV Specific breakdown
+  tvDetails?: {
+    pricePerEpisode: number;
+    episodeCount: number;
+    isShortEpisode: boolean;
+  };
 }

@@ -133,12 +133,21 @@ export const fetchTvDetails = async (tmdbID: string): Promise<MovieData> => {
         ? tmdbData.production_countries.map((c: any) => c.name)
         : [];
 
+    // Map detailed seasons info
+    const seasons = tmdbData.seasons_data 
+        ? tmdbData.seasons_data.map((s: any) => ({
+            season_number: s.season_number,
+            episode_count: s.episode_count
+          }))
+        : [];
+
     return {
       type: 'tv',
       title: tmdbData.name,
       originalTitle: tmdbData.original_name,
       year: year,
       runtimeMinutes: tmdbData.calculated_runtime || 0,
+      averageRuntime: tmdbData.average_runtime || 45, // Map average runtime
       imdbRating: tmdbData.vote_average || 0,
       // No standard IMDB ID mapping easily available for TV in this flow without external calls
       userRating: undefined, 
@@ -151,7 +160,8 @@ export const fetchTvDetails = async (tmdbID: string): Promise<MovieData> => {
       wikipediaUrl: `https://ru.wikipedia.org/w/index.php?search=${encodeURIComponent(tmdbData.name)}`,
       description: tmdbData.overview || "Описание отсутствует",
       totalSeasons: tmdbData.number_of_seasons,
-      totalEpisodes: tmdbData.number_of_episodes
+      totalEpisodes: tmdbData.number_of_episodes,
+      seasons: seasons
     };
   } catch (error) {
     console.error("TV Details fetch error:", error);
