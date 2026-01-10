@@ -15,21 +15,34 @@ export const handler = async (event: any) => {
   }
 
   // --- LOG COLLECTOR START ---
+  // Функция для очистки логов от секретов
+  const sanitize = (text: string): string => {
+      if (!text) return text;
+      return text
+        // Скрываем параметры key=... и api_key=... в URL
+        .replace(/([?&](key|api_key|appid)=)[^&"\s]+/gi, '$1***REDACTED***')
+        // Скрываем Bearer токены (если вдруг попадут в дамп хедеров)
+        .replace(/(Authorization"?\s*[:=]\s*"?Bearer\s+)[^"\s]+/gi, '$1***REDACTED***');
+  };
+
   const debugLogs: string[] = [];
   const log = (message: string, data?: any) => {
       const timestamp = new Date().toISOString().split('T')[1].slice(0, -1); // HH:MM:SS.mmm
       let logLine = `[SERVER ${timestamp}] ${message}`;
       if (data !== undefined) {
           try {
-            // Если объект слишком большой, можно сократить, но пока логируем как есть для дебага
             const json = JSON.stringify(data);
             logLine += ` | ${json}`;
           } catch (e) {
             logLine += ` | [Circular/Unserializable]`;
           }
       }
-      console.log(logLine); // Log to Netlify function console
-      debugLogs.push(logLine); // Store for client response
+      
+      // Санитизация перед выводом/сохранением
+      const safeLogLine = sanitize(logLine);
+
+      console.log(safeLogLine); // Log to Netlify function console
+      debugLogs.push(safeLogLine); // Store for client response
   };
   // --- LOG COLLECTOR END ---
 
@@ -132,68 +145,76 @@ export const handler = async (event: any) => {
 
       // --- PARALLEL EXECUTION ---
       
-      // A. Groq AI (HLTB)
+      // A. Groq AI (HLTB) with Fallback Strategy
       const groqPromise = (async () => {
-          const GROQ_MODEL = "llama-3.3-70b-versatile";
-          try {
-              log(`🚀 Starting Groq Request for: "${title}" (${releaseYear})`);
-              log(`🤖 Model: ${GROQ_MODEL}`);
-              
-              const systemPrompt = `You are an expert on video game completion times, specifically data from HowLongToBeat.com.
-              Your ONLY task is to provide the estimated "Main Story" completion time in hours for the given game.
-              
-              Rules:
-              1. Return ONLY a valid JSON object: { "hours": number }.
-              2. Do not include any explanations or other text.
-              3. If the game is endless (e.g., multiplayer only), return { "hours": 0 }.
-              4. If data is unavailable, estimate based on genre standards but prefer accuracy.
-              `;
+          // Priority list:
+          // 1. llama-3.3-70b-versatile (Smartest, new standard)
+          // 2. llama-3.1-8b-instant (Fastest, highest rate limits)
+          const MODELS_TO_TRY = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
+          
+          const systemPrompt = `You are an expert on video game completion times, specifically data from HowLongToBeat.com.
+          Your ONLY task is to provide the estimated "Main Story" completion time in hours for the given game.
+          
+          Rules:
+          1. Return ONLY a valid JSON object: { "hours": number }.
+          2. Do not include any explanations or other text.
+          3. If the game is endless (e.g., multiplayer only), return { "hours": 0 }.
+          4. If data is unavailable, estimate based on genre standards but prefer accuracy.
+          `;
 
-              const userPrompt = `Game: "${title}" (${releaseYear}). Main Story completion time in hours?`;
+          const userPrompt = `Game: "${title}" (${releaseYear}). Main Story completion time in hours?`;
 
-              const requestPayload = {
-                  messages: [
-                      { role: "system", content: systemPrompt },
-                      { role: "user", content: userPrompt }
-                  ],
-                  model: GROQ_MODEL,
-                  temperature: 0,
-                  response_format: { type: "json_object" }
-              };
+          for (const model of MODELS_TO_TRY) {
+              try {
+                  log(`🚀 Starting Groq Request for: "${title}"`);
+                  log(`🤖 Attempting Model: ${model}`);
 
-              log(`📨 Sending Request to Groq API`, requestPayload);
+                  const requestPayload = {
+                      messages: [
+                          { role: "system", content: systemPrompt },
+                          { role: "user", content: userPrompt }
+                      ],
+                      model: model,
+                      temperature: 0,
+                      response_format: { type: "json_object" }
+                  };
 
-              const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                  method: "POST",
-                  headers: {
-                      "Authorization": `Bearer ${GROQ_API_KEY}`,
-                      "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify(requestPayload)
-              });
+                  const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                      method: "POST",
+                      headers: {
+                          "Authorization": `Bearer ${GROQ_API_KEY}`,
+                          "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify(requestPayload)
+                  });
 
-              if (!groqResponse.ok) {
-                  const errText = await groqResponse.text();
-                  log(`❌ Groq API Error: ${groqResponse.status}`, errText);
-                  throw new Error(`Groq Status: ${groqResponse.status}`);
-              }
-
-              const groqData = await groqResponse.json();
-              log(`📥 Received Groq Response`, groqData);
-
-              const content = groqData.choices[0]?.message?.content;
-              log(`📦 Extracted Content`, content);
-
-              if (content) {
-                  const parsed = JSON.parse(content);
-                  if (typeof parsed.hours === 'number') {
-                      log(`✅ Groq Validated Time: ${parsed.hours}h`);
-                      return parsed.hours;
+                  if (!groqResponse.ok) {
+                      const errText = await groqResponse.text();
+                      log(`⚠️ Model ${model} failed (${groqResponse.status}): ${errText.substring(0, 100)}...`);
+                      // If it's the last model, throw to exit the loop
+                      if (model === MODELS_TO_TRY[MODELS_TO_TRY.length - 1]) {
+                          throw new Error(`All models failed. Last status: ${groqResponse.status}`);
+                      }
+                      log(`🔄 Switching to backup model...`);
+                      continue; // Try next model
                   }
+
+                  const groqData = await groqResponse.json();
+                  const content = groqData.choices[0]?.message?.content;
+                  
+                  if (content) {
+                      const parsed = JSON.parse(content);
+                      if (typeof parsed.hours === 'number') {
+                          log(`✅ Groq Success (${model}): ${parsed.hours}h`);
+                          return parsed.hours;
+                      }
+                  }
+              } catch (e: any) {
+                  log(`⚠️ Groq Exception (${model}): ${e.message}`);
               }
-          } catch (e: any) {
-              log(`⚠️ Groq Exception: ${e.message}`);
           }
+          
+          log(`❌ All Groq attempts failed.`);
           return null;
       })();
 
@@ -282,7 +303,7 @@ export const handler = async (event: any) => {
           return { steamPriceRub, steamUrl };
       })();
 
-      const AUX_TIMEOUT = 6000;
+      const AUX_TIMEOUT = 8000; // Increased timeout slightly to allow for fallback retry
       
       const safeGroqPromise = Promise.race([
           groqPromise,
@@ -341,4 +362,3 @@ export const handler = async (event: any) => {
     };
   }
 };
-    
