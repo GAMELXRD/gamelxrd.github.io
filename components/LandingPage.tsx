@@ -8,6 +8,7 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
   const [isLive, setIsLive] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const avatarUrl = "https://static-cdn.jtvnw.net/jtv_user_pictures/b20cf68c-db35-43c4-945b-f134dd1f1b80-profile_image-300x300.png";
 
   useEffect(() => {
@@ -42,7 +43,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
       desc: "Анонсы, новости, мемы",
       url: "https://t.me/+JeAW9QQs1lAwMWZi",
       color: "hover:border-[#229ED9] hover:text-[#229ED9]",
-      // New Telegram Icon
       icon: <svg viewBox="0 0 32 32" fill="currentColor" className="w-8 h-8"><path d="m29.919 6.163-4.225 19.925c-.319 1.406-1.15 1.756-2.331 1.094l-6.438-4.744-3.106 2.988c-.344.344-.631.631-1.294.631l.463-6.556 11.931-10.781c.519-.462-.113-.719-.806-.256l-14.75 9.288-6.35-1.988c-1.381-.431-1.406-1.381.288-2.044l24.837-9.569c1.15-.431 2.156.256 1.781 2.013z"/></svg>
     },
     {
@@ -58,6 +58,27 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
       url: "https://boosty.to/gamelxrd",
       color: "hover:border-[#f15f2c] hover:text-[#f15f2c]",
       icon: <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8"><path d="M2.661 14.337 6.801 0h6.362L11.88 4.444l-0.038 0.077 -3.378 11.733h3.15c-1.321 3.289 -2.35 5.867 -3.086 7.733 -5.816 -0.063 -7.442 -4.228 -6.02 -9.155M8.554 24l7.67 -11.035h-3.25l2.83 -7.073c4.852 0.508 7.137 4.33 5.791 8.952C20.16 19.81 14.344 24 8.68 24h-0.127z"/></svg>
+    },
+    {
+      title: "Fetta",
+      desc: "Полезный подарок",
+      url: "https://fetta.app/u/gamelxrd",
+      isFetta: true, // Marker for special styling
+      color: "", // Handled custom
+      icon: (
+        <svg viewBox="0 0 100 100" fill="none" className="w-8 h-8">
+          <defs>
+            <linearGradient id="fetta_grad" x1="0%" y1="100%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#FF59C8" /> {/* Pink bottom-left */}
+              <stop offset="100%" stopColor="#FFC55A" /> {/* Orange top-right */}
+            </linearGradient>
+          </defs>
+          <path 
+            d="M87.9994 49.143C87.9994 56.5509 85.8001 63.7924 81.6795 69.9518C77.559 76.1113 71.7022 80.912 64.85 83.7468C57.9978 86.5817 50.4578 87.3234 43.1835 85.8782C35.9092 84.433 29.2274 80.8658 23.9829 75.6276C18.7384 70.3895 15.1669 63.7156 13.72 56.4501C12.273 49.1845 13.0156 41.6536 15.8539 34.8096C18.6922 27.9656 23.4987 22.116 29.6655 18.0004C46.3327 18.2276 77.9994 32.3231 87.9994 49.143Z" 
+            className="fill-zinc-300 transition-all duration-300 group-hover:fill-[url(#fetta_grad)]"
+          />
+        </svg>
+      )
     },
     {
       title: "Игры",
@@ -192,29 +213,44 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
         </button>
 
         {/* Main Social Links */}
-        {mainLinks.map((link, idx) => (
-          <a
-            key={idx}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`
-              w-full group bg-black/40 backdrop-blur-md border border-white/10 p-4 md:p-5 rounded-2xl flex items-center gap-5 transition-all duration-200 hover:scale-[1.01] hover:bg-black/60
-              ${link.color}
-            `}
-          >
-             <div className="p-2 bg-white/5 rounded-xl text-zinc-300 group-hover:text-inherit transition-colors flex-shrink-0">
-                {link.icon}
-             </div>
-             <div className="flex flex-col text-left flex-1 min-w-0">
-                <span className="text-zinc-100 font-bold text-lg md:text-xl truncate">{link.title}</span>
-                <span className="text-zinc-500 text-sm truncate group-hover:text-zinc-400">{link.desc}</span>
-             </div>
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-zinc-600 group-hover:text-zinc-300">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-             </svg>
-          </a>
-        ))}
+        {mainLinks.map((link, idx) => {
+          // Special handling for Fetta
+          // @ts-ignore
+          const isFetta = link.isFetta === true;
+          const isFettaHovered = isFetta && hoveredLink === link.title;
+
+          return (
+            <a
+              key={idx}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={() => setHoveredLink(link.title)}
+              onMouseLeave={() => setHoveredLink(null)}
+              style={isFettaHovered ? {
+                // Layer 1: Inner dark semi-transparent fill (padding-box)
+                // Layer 2: Outer gradient (border-box) which shows through the transparent border
+                background: 'linear-gradient(rgba(0,0,0,1.0), rgba(0,0,0,1.0)) padding-box, linear-gradient(to top right, #FF59C8, #FFC55A) border-box',
+                borderColor: 'transparent'
+              } : {}}
+              className={`
+                w-full group bg-black/40 backdrop-blur-md p-4 md:p-5 rounded-2xl flex items-center gap-5 transition-all duration-200 hover:scale-[1.01] hover:bg-black/60
+                ${isFetta ? 'border border-white/10' : `border border-white/10 ${link.color}`}
+              `}
+            >
+               <div className="p-2 bg-white/5 rounded-xl text-zinc-300 group-hover:text-inherit transition-colors flex-shrink-0">
+                  {link.icon}
+               </div>
+               <div className="flex flex-col text-left flex-1 min-w-0">
+                  <span className="text-zinc-100 font-bold text-lg md:text-xl truncate">{link.title}</span>
+                  <span className="text-zinc-500 text-sm truncate group-hover:text-zinc-400">{link.desc}</span>
+               </div>
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-zinc-600 group-hover:text-zinc-300">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+               </svg>
+            </a>
+          );
+        })}
 
         {/* Rating Links (Grid Row) */}
         <div className="grid grid-cols-2 gap-4 pt-2">
