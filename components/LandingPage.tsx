@@ -148,7 +148,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
           rel="noopener noreferrer"
           className={`
              w-24 h-24 md:w-28 md:h-28 rounded-2xl p-1 relative group cursor-pointer flex-shrink-0 transition-all duration-500 block
-             ${isLive ? 'border-2 border-red-500' : 'border-2 border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]'}
+             ${isLive ? 'border-2 border-red-500' : 'border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]'}
         `}>
              {/* Breathing background logic for LIVE status */}
              {isLive && (
