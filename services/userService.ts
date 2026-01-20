@@ -204,6 +204,7 @@ const WATCHED_DB: Record<string, number> = {
   "tt5153956": 2,   // Last Sentinel
   "tt0448134": 7,   // Sunshine
   "tt0816692": 10,  // Interstellar
+  "tt7631058": 5,   // The Lord of the Rings: The Rings of Power 
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
