@@ -207,6 +207,7 @@ const WATCHED_DB: Record<string, number> = {
   "tt7631058": 5,   // The Lord of the Rings: The Rings of Power 
   "tt6820256": 7,   // Arctic
   "tt1601913": 6,   // The Grey
+  "tt0944834": 8,   // Caçadores de Dragões
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
