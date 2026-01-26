@@ -208,6 +208,7 @@ const WATCHED_DB: Record<string, number> = {
   "tt6820256": 7,   // Arctic
   "tt1601913": 6,   // The Grey
   "tt0944834": 8,   // Caçadores de Dragões
+  "tt3758814": 4,   // The Ice Road
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
