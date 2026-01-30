@@ -210,6 +210,8 @@ const WATCHED_DB: Record<string, number> = {
   "tt0944834": 8,   // Caçadores de Dragões
   "tt3758814": 4,   // The Ice Road
   "tt1959490": 7,   // Noah
+  "tt0232500": 7,   // The Fast and the Furious
+  "tt0322259": 6,   // 2 Fast 2 Furious
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
