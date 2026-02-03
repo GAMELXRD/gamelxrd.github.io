@@ -213,6 +213,7 @@ const WATCHED_DB: Record<string, number> = {
   "tt0232500": 7,   // The Fast and the Furious
   "tt0322259": 6,   // 2 Fast 2 Furious
   "tt0463985": 5,   // The Fast and the Furious: Tokyo Drift
+  "tt5715066": 3,   // Mortal
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
