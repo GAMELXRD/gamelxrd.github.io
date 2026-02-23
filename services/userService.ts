@@ -220,6 +220,7 @@ const WATCHED_DB: Record<string, number> = {
   "tt35222590": 8,  // Exit 8
   "tt1307068": 6,   // Seeking a Friend for the End of the World
   "tt0978764": 7,   // Sucker Punch
+  "tt11535228": 7,  // Bisang seoneon
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
