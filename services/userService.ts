@@ -214,6 +214,12 @@ const WATCHED_DB: Record<string, number> = {
   "tt0322259": 6,   // 2 Fast 2 Furious
   "tt0463985": 5,   // The Fast and the Furious: Tokyo Drift
   "tt5715066": 3,   // Mortal
+  "tt27543632": 4,  // The Housemaid
+  "tt4972582": 8,   // Split
+  "tt1626146": 9,   // Hector and the Search for Happiness
+  "tt35222590": 8,  // Exit 8
+  "tt1307068": 6,   // Seeking a Friend for the End of the World
+  "tt0978764": 7,   // Sucker Punch
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
