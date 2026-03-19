@@ -115,6 +115,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenCalculator }) => {
       style: "from-green-500/10 to-darkgreen-500/10 border-green-500/20 text-white-200 hover:border-green-500/50 hover:text-white"
     },
     {
+      title: "DonateX",
+      url: "https://donatex.gg/donate/gamelxrd",
+      style: "from-purple-500/10 to-blue-500/10 border-blue-500/20 text-white-200 hover:border-purple-500/50 hover:text-white"
+    },
+    {
       title: "DonationAlerts",
       url: "https://www.donationalerts.com/r/gamelxrd",
       style: "from-orange-500/10 to-darkorange-500/10 border-orange-500/20 text-white-200 hover:border-orange-500/50 hover:text-white"
