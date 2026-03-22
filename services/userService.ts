@@ -220,7 +220,30 @@ const WATCHED_DB: Record<string, number> = {
   "tt35222590": 8,  // Exit 8
   "tt1307068": 6,   // Seeking a Friend for the End of the World
   "tt0978764": 7,   // Sucker Punch
-  "tt11535228": 7,  // Bisang seoneon
+  "tt11535228": 7,  // Emergency Declaration
+  "tt23157384": 8,  // Sew Torn
+  "tt5774060": 7,   // Underwater
+  "tt0884328": 4,   // The Mist
+  "tt8772262": 8,   // Midsommar
+  "tt6857112": 9,   // Us
+  "tt15474916": 7,  // Smile
+  "tt29268110": 8,  // Smile 2
+  "tt7144666": 8,   // The Black Phone
+  "tt6644200": 7,   // A Quiet Place
+  "tt14030816": 6,  // Baghead
+  "tt8364368": 5,   // Crawl
+  "tt4589218": 6,   // Five Nights at Freddy's
+  "tt30274401": 7,  // Five Nights at Freddy's 2
+  "tt16030222": 1,  // The Bad Seed Returns
+  "tt0466909": 4,   // The Omen 2006
+  "tt9731534": 9,   // The House at Night
+  "tt1687901": 8,   // The Awakening
+  "tt13097932": 9,  // One Life
+  "tt16300962": 6,  // When Evil Lurks
+  "tt10229558": 7,  // The Dark and the Wicked
+  "tt3882082": 7,   // The Boy
+  "tt9173418": 3,   // Brahms: The Boy 2
+  "tt35521922": 7,  // Good Boy - Trust his instincts
 };
 
 export const getUserRating = async (imdbID: string): Promise<number | undefined> => {
