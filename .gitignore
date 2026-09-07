@@ -13,6 +13,7 @@ dist-ssr
 *.local
 .tokensave
 .wrangler
+WORKLOG.md
 
 # Editor directories and files
 .vscode/*
