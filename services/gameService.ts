@@ -1,13 +1,13 @@
 
 import { MovieSuggestion, GameData } from "../types";
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL, proxyImage, fetchWithTimeout } from "./apiConfig";
 
 // --- SEARCH GAMES ---
 export const searchGames = async (query: string, signal?: AbortSignal): Promise<MovieSuggestion[]> => {
   if (!query || query.length < 2) return [];
 
   try {
-    const response = await fetch(`${API_BASE_URL}/search-game?query=${encodeURIComponent(query)}`, { signal });
+    const response = await fetchWithTimeout(`${API_BASE_URL}/search-game?query=${encodeURIComponent(query)}`, { signal });
     if (!response.ok) {
         throw new Error(`Server Error: ${response.status}`);
     }
@@ -19,7 +19,7 @@ export const searchGames = async (query: string, signal?: AbortSignal): Promise<
       title: game.name,
       year: game.released ? game.released.split("-")[0] : "",
       imdbID: game.slug, // RAWG uses slugs as IDs usually
-      poster: game.background_image ? game.background_image : "",
+      poster: game.background_image ? proxyImage(game.background_image) : "",
       mediaType: 'game'
     }));
   } catch (error: any) {
@@ -40,13 +40,13 @@ export const fetchGameData = async (query: string, releaseYear?: string): Promis
       console.log(`📡 Sending POST request to ${API_BASE_URL}/analyze-game`);
       console.log(`📦 Payload:`, { query });
 
-      const response = await fetch(`${API_BASE_URL}/analyze-game`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/analyze-game`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({ query })
-      });
+      }, 15000);
 
       if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
@@ -81,6 +81,7 @@ export const fetchGameData = async (query: string, releaseYear?: string): Promis
       return {
         type: 'game',
         ...gameDetails,
+        posterUrl: gameDetails.posterUrl ? proxyImage(gameDetails.posterUrl) : undefined,
         userDuration: Math.max(4, gameDetails.hltbTime || 4)
       };
 

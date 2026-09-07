@@ -4,11 +4,46 @@
 
 const NETLIFY_ORIGIN = "https://gamelxrd.netlify.app";
 
+// Постеры/обложки грузятся браузером напрямую с этих CDN, которые в РФ
+// бывают заблокированы отдельно от netlify.app. /img проксирует их через воркер.
+const ALLOWED_IMAGE_HOSTS = new Set(["image.tmdb.org", "media.rawg.io"]);
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
+
+async function handleImageProxy(url) {
+  const src = url.searchParams.get("src");
+  if (!src) {
+    return new Response("Missing src", { status: 400, headers: CORS_HEADERS });
+  }
+
+  let target;
+  try {
+    target = new URL(src);
+  } catch {
+    return new Response("Invalid src", { status: 400, headers: CORS_HEADERS });
+  }
+
+  if (!ALLOWED_IMAGE_HOSTS.has(target.hostname)) {
+    return new Response("Host not allowed", { status: 403, headers: CORS_HEADERS });
+  }
+
+  let upstream;
+  try {
+    upstream = await fetch(target.toString(), { cf: { cacheTtl: 86400, cacheEverything: true } });
+  } catch {
+    return new Response("Upstream unreachable", { status: 502, headers: CORS_HEADERS });
+  }
+
+  const headers = new Headers(upstream.headers);
+  headers.set("Access-Control-Allow-Origin", "*");
+  headers.set("Cache-Control", "public, max-age=86400");
+
+  return new Response(upstream.body, { status: upstream.status, headers });
+}
 
 export default {
   async fetch(request) {
@@ -17,6 +52,11 @@ export default {
     }
 
     const url = new URL(request.url);
+
+    if (url.pathname === "/img") {
+      return handleImageProxy(url);
+    }
+
     const targetUrl = new URL(
       "/.netlify/functions" + url.pathname + url.search,
       NETLIFY_ORIGIN
