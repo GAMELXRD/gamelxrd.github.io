@@ -26,6 +26,11 @@ export const handler = async (event: any) => {
     const response = await fetch(url);
     const data = await response.json();
 
+    // RAWG embeds the API key in `next`/`previous` pagination URLs — strip them
+    // so the key never reaches the client. The frontend doesn't use pagination here.
+    delete data.next;
+    delete data.previous;
+
     return {
       statusCode: 200,
       headers,
